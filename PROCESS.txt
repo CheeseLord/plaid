@@ -1,0 +1,9 @@
+Create a ticket associated with each FIXME or TODO.
+
+Every piece of code must be understood by at least two people.
+
+Use unit tests and contracts wherever possible.
+Structure code so that as much as possible is testable.
+
+Tag things pure where possible.
+
