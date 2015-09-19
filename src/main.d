@@ -10,4 +10,6 @@ void main()
 
     writefln("One more than 5 is: %s", successor(5));
     writefln("Twice 5 is: %s", twice(5));
+
+    // TODD [#2]: Say goodbye to the world, for symmetry.
 }
