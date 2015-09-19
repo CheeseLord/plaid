@@ -1,0 +1,3 @@
+Build and run ......... dub
+Just build ............ dub build
+Build documentation ... dub build --build=docs
