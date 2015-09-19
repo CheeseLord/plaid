@@ -1,0 +1,14 @@
+# dub files
+.dub
+docs.json
+__dummy.html
+*.o
+*.obj
+
+# TODO
+# kronmillerg, 19 Sep 2015 -- Temporarily .gitignore dub.selections.json
+dub.selections.json
+
+# Final executable
+plaid
+
