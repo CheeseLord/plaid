@@ -1,0 +1,10 @@
+{
+    "name":         "plaid",
+    "description":  "A PLAtformer In D",
+    "copyright":    "Copyright © 2015, CheeseLord, JoelO, Greg Kronmiller",
+    "authors":      ["CheeseLord", "JoelO", "kronmillerg"],
+    "importPaths":  ["src"],
+    "targetType":   "executable",
+    "dependencies": {
+    }
+}
