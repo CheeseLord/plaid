@@ -13,3 +13,9 @@ int twice(int x) pure
 {
     return x + x;
 }
+
+/// This example is generated automatically from a unittest
+unittest
+{
+    assert(twice(5) == 10);
+}
