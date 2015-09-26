@@ -1,0 +1,14 @@
+If you're annoyed by having to enter your password every time you git push,
+there are a couple options.
+
+Option 1: configure git to cache your password in memory for some time. See:
+    https://help.github.com/articles/caching-your-github-password-in-git/
+
+Option 2: clone the repository using SSH instead of HTTPS. In this case you'll
+use an SSH key instead of a password. This is more complicated. See:
+    https://help.github.com/articles/generating-ssh-keys/
+
+Other related github help pages:
+    https://help.github.com/articles/why-is-git-always-asking-for-my-password/
+    https://help.github.com/articles/which-remote-url-should-i-use/
+
