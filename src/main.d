@@ -1,7 +1,7 @@
 import std.stdio;
 
 import mylib;
-
+import OpenAlTest;
 import GTKTest;
 
 void main()
@@ -14,6 +14,11 @@ void main()
     writefln("Twice 5 is: %s", twice(5));
 
     // TODD [#2]: Say goodbye to the world, for symmetry.
+
+    if (testSound()) {
+        writefln("Oh noes! Something went wrong with the sound.");
+        return;
+    }
 
     testWindow();
 }
