@@ -1,3 +1,6 @@
 Build and run ......... dub
 Just build ............ dub build
 Build documentation ... dub build --build=docs
+
+For information on the things you can speciy in dub.json, see:
+    http://code.dlang.org/package-format?lang=json
