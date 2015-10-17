@@ -11,6 +11,8 @@ private import derelict.alure.alure;
 // This code adapted from the ALURE example 'alureplay.c', included with the
 // ALURE source tarball.
 
+extern (C) void BreakOnMe() {}
+
 int testSound()
 {
     scope (exit) {writefln("Test 999");}
@@ -34,6 +36,8 @@ int testSound()
 
     writefln("Test 2");
 
+    writefln("&alGenSources = %s", &alGenSources);
+    BreakOnMe();
     alGenSources(1, &src);
     writefln("Test 2b"); // Or not 2b?
     if (alGetError() != AL_NO_ERROR)
