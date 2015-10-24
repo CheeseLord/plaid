@@ -2,7 +2,8 @@ import std.stdio;
 
 import mylib;
 
-import GTKTest;
+// import GTKTest;
+import SDLExample;
 
 void main()
 {
@@ -15,5 +16,6 @@ void main()
 
     // TODD [#2]: Say goodbye to the world, for symmetry.
 
-    testWindow();
+    // testWindow();
+    testSDL();
 }
