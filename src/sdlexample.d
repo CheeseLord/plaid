@@ -6,6 +6,15 @@ import core.thread;
 
 import derelict.sdl2.sdl;
 
+// FIXME: Magic numbers bad.
+// TODO: Track coordinates in world coordinates, not screen coordinates.
+SDL_Rect playerRect = {
+    x: 50,
+    y: 230,
+    w: 20,
+    h: 20
+};
+
 void testSDL()
 {
     // Set up SDL.
@@ -71,9 +80,24 @@ void testSDL()
 
 void UpdateGame(Duration elapsedTime)
 {
+    // Convert the elaped time to seconds.
+    long secs, nsecs;
+    elapsedTime.split!("seconds", "nsecs")(secs, nsecs);
+    double elapsedSeconds = cast(double)(secs) + 1.0e-9 * cast(double)(nsecs);
+
+    debug {
+        writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
+    }
+
+    playerRect.x += cast(int)(100 * elapsedSeconds);
+
+    debug {
+        writefln("Player x is %s.", playerRect.x);
+    }
 }
 
 void RenderGame(SDL_Surface *surface)
 {
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
+    SDL_FillRect(surface, &playerRect, SDL_MapRGB(surface.format, 0, 0, 0));
 }
