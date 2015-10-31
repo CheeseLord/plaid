@@ -115,10 +115,6 @@ void updateGame(Duration elapsedTime)
 
     playerRect.x += cast(int)(xVel * elapsedSeconds);
     playerRect.y += cast(int)(yVel * elapsedSeconds);
-
-    debug {
-        writefln("Player x is %s.", playerRect.x);
-    }
 }
 
 void renderGame(SDL_Surface *surface)
