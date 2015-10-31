@@ -10,3 +10,4 @@ test:
 clean:
 	dub clean
 	rm -rf docs plaid
+	rm dub.selections.json

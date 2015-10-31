@@ -6,7 +6,6 @@
     "importPaths":  ["src"],
     "targetType":   "executable",
     "dependencies": {
-        "gtk-d:gtkd": "~>3.1.4",
         "derelict-sdl2": "~>1.9.7",
     }
 }
