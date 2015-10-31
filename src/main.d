@@ -46,16 +46,14 @@ void runGame()
 
     MonoTime prevStartTime = MonoTime.currTime;
 
-    MAIN_LOOP: while (true) {
+    while (!shouldQuit) {
         // Get start time of this iteration.
         MonoTime currStartTime = MonoTime.currTime;
 
         // Quit when someone tries to close the window:
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                break MAIN_LOOP;
-            }
+            handleEvent(event);
         }
 
         // Simulate game forward.
@@ -75,6 +73,13 @@ void runGame()
         if (!timeToSleep.isNegative) {
             Thread.sleep(timeToSleep);
         }
+    }
+}
+
+void handleEvent(SDL_Event event)
+{
+    if (event.type == SDL_QUIT) {
+        shouldQuit = true;
     }
 }
 
