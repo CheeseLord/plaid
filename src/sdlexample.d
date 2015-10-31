@@ -6,7 +6,7 @@ import core.thread;
 
 import derelict.sdl2.sdl;
 
-// FIXME: Magic numbers bad.
+// TODO: Magic numbers bad.
 // TODO: Track coordinates in world coordinates, not screen coordinates.
 SDL_Rect playerRect = {
     x: 50,
