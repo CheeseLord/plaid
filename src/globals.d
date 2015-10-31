@@ -11,6 +11,9 @@ SDL_Rect playerRect = {
     h: 20
 };
 
+int xVel = 100;
+int yVel = 0;
+
 SDL_Window *window;
 
 // This variable is set to true when it's time to end the program -- perhaps

@@ -51,10 +51,7 @@ void runGame()
         MonoTime currStartTime = MonoTime.currTime;
 
         // Quit when someone tries to close the window:
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            handleEvent(event);
-        }
+        handleEvents();
 
         // Simulate game forward.
         updateGame(currStartTime - prevStartTime);
@@ -76,10 +73,32 @@ void runGame()
     }
 }
 
-void handleEvent(SDL_Event event)
+void handleEvents()
 {
-    if (event.type == SDL_QUIT) {
-        shouldQuit = true;
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        // Handle the next event here. To get the type of event (keypress,
+        // mouse motion, close window, etc.), look at event.type.
+        // For a list of possible event types, see
+        //     https://wiki.libsdl.org/SDL_EventType
+        //
+        // If the type is some sort of keypress, you'll want to look at the
+        // actual key that was pressed, stored in event.key.keysym. See
+        //     https://wiki.libsdl.org/SDL_Keysym
+        // for information on interpreting these. That page has links to the
+        // lists o key codes and scan codes.
+        if (event.type == SDL_QUIT) {
+            shouldQuit = true;
+        }
+        else if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
+                case SDLK_UP:    xVel =    0; yVel = -100; break;
+                case SDLK_RIGHT: xVel =  100; yVel =    0; break;
+                case SDLK_DOWN:  xVel =    0; yVel =  100; break;
+                case SDLK_LEFT:  xVel = -100; yVel =    0; break;
+                default: // Ignore other keys.
+            }
+        }
     }
 }
 
@@ -94,7 +113,8 @@ void updateGame(Duration elapsedTime)
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
     }
 
-    playerRect.x += cast(int)(100 * elapsedSeconds);
+    playerRect.x += cast(int)(xVel * elapsedSeconds);
+    playerRect.y += cast(int)(yVel * elapsedSeconds);
 
     debug {
         writefln("Player x is %s.", playerRect.x);
