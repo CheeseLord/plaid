@@ -84,13 +84,13 @@ void updateGame(Duration elapsedTime)
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
     }
 
-    playerRect.x += cast(int)(xVel * elapsedSeconds);
-    playerRect.y += cast(int)(yVel * elapsedSeconds);
-    yVel += cast(int)(gravity * elapsedSeconds);
+    player.rect.x += cast(int)(player.vel.x * elapsedSeconds);
+    player.rect.y += cast(int)(player.vel.y * elapsedSeconds);
+    player.vel.y  += cast(int)(gravity * elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)
 {
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
-    SDL_FillRect(surface, &playerRect, SDL_MapRGB(surface.format, 0, 0, 0));
+    SDL_FillRect(surface, &player.rect, SDL_MapRGB(surface.format, 0, 0, 0));
 }

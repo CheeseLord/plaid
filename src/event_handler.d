@@ -23,11 +23,15 @@ void handleEvents()
         }
         else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
-                case SDLK_UP:    xVel =    0; yVel = -100; break;
-                case SDLK_RIGHT: xVel =  100; yVel =    0; break;
-                case SDLK_DOWN:  xVel =    0; yVel =  100; break;
-                case SDLK_LEFT:  xVel = -100; yVel =    0; break;
-                case SDLK_SPACE: yVel = -100; break;
+                case SDLK_UP:    player.vel.x =    0;
+                                 player.vel.y = -100; break;
+                case SDLK_RIGHT: player.vel.x =  100;
+                                 player.vel.y =    0; break;
+                case SDLK_DOWN:  player.vel.x =    0;
+                                 player.vel.y =  100; break;
+                case SDLK_LEFT:  player.vel.x = -100;
+                                 player.vel.y =    0; break;
+                case SDLK_SPACE: player.vel.y = -100; break;
                 default: // Ignore other keys.
             }
         }
