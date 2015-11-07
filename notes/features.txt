@@ -1,0 +1,29 @@
+Minimum features:
+    Enough infrastructure to load images for graphics
+    Sound
+    World moves down
+        (design for world moving in any of 4 cardinal directions)
+    If you fall off the bottom, you lose
+    Gravity
+    Jumping
+    Platforms (solid on both sides)
+    Platforms (can jump up through)
+    Spikes (kill? stun?)
+    File format for levels
+    Menus
+    Control config
+
+
+Optional features:
+    Actually decent graphics
+    Ladders
+    Wall jumping
+    More types of platforms
+        Bouncy platforms (yvel = -|yvel|)
+        Platforms that change which direction they're moving when you jump
+    Enemies (killable? not?)
+    Level editor
+    Scores?
+    High scores
+    Achievements
+

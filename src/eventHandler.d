@@ -17,7 +17,7 @@ void handleEvents()
         // actual key that was pressed, stored in event.key.keysym. See
         //     https://wiki.libsdl.org/SDL_Keysym
         // for information on interpreting these. That page has links to the
-        // lists o key codes and scan codes.
+        // lists of key codes and scan codes.
         if (event.type == SDL_QUIT) {
             shouldQuit = true;
         }
