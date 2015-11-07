@@ -3,6 +3,7 @@ Minimum features:
     Sound
     World moves down
         (design for world moving in any of 4 cardinal directions)
+        Well, really the world stays still but there's a window that moves up
     If you fall off the bottom, you lose
     Gravity
     Jumping
