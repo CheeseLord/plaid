@@ -22,16 +22,17 @@ void handleEvents()
             shouldQuit = true;
         }
         else if (event.type == SDL_KEYDOWN) {
+            // TODO [#3]: Magic numbers bad
             switch (event.key.keysym.sym) {
-                case SDLK_UP:    player.vel.x =    0;
-                                 player.vel.y = -100; break;
-                case SDLK_RIGHT: player.vel.x =  100;
-                                 player.vel.y =    0; break;
-                case SDLK_DOWN:  player.vel.x =    0;
-                                 player.vel.y =  100; break;
-                case SDLK_LEFT:  player.vel.x = -100;
-                                 player.vel.y =    0; break;
-                case SDLK_SPACE: player.vel.y = -100; break;
+                case SDLK_UP:    player.vel.x =   0;
+                                 player.vel.y =  30; break;
+                case SDLK_RIGHT: player.vel.x =  30;
+                                 player.vel.y =   0; break;
+                case SDLK_DOWN:  player.vel.x =   0;
+                                 player.vel.y = -30; break;
+                case SDLK_LEFT:  player.vel.x = -30;
+                                 player.vel.y =   0; break;
+                case SDLK_SPACE: player.vel.y =  30; break;
                 default: // Ignore other keys.
             }
         }

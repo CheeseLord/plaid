@@ -1,14 +1,12 @@
 module entity_types;
 
-// TODO [#4]: Track coordinates in world coordinates, not screen coordinates.
-import derelict.sdl2.sdl;
+import geometry_types;
 
-// TODO [#4]: Track coordinates in world coordinates, not screen coordinates.
-alias HitRect = SDL_Rect;
+alias HitRect = WorldRect;
 
 struct Velocity {
-    int x;
-    int y;
+    double x;
+    double y;
 }
 
 struct Player {

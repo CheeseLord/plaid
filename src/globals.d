@@ -2,12 +2,13 @@ module globals;
 
 import derelict.sdl2.sdl;
 
+import geometry_types;
 import entity_types;
 
 // Constants
 immutable int frameRate = 20;
 
-immutable int gravity = 200;
+immutable int gravity = -50;
 
 
 // Game state
@@ -15,13 +16,13 @@ immutable int gravity = 200;
 // TODO [#3]: Magic numbers bad.
 Player player = {
     rect: {
-        x: 50,
-        y: 230,
+        x: 20,
+        y: 65,
         w: 20,
         h: 20,
     },
     vel: {
-        x: 100,
+        x: 30,
         y: 0,
     },
 };
@@ -34,4 +35,19 @@ SDL_Window *window;
 // because the user tried to close the window, or they clicked an in-game
 // "Quit" button.
 bool shouldQuit = false;
+
+// Used for converting between world and screen coordinates.
+// TODO [#3]: Magic numbers bad
+WorldRect  wViewRect = {
+    x: 0,
+    y: 0,
+    w: 200,
+    h: 150,
+};
+ScreenRect sViewRect = {
+    x: 0,
+    y: 0,
+    w: 640,
+    h: 480,
+};
 
