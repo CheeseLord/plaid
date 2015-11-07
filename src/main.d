@@ -93,9 +93,9 @@ void handleEvents()
         else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_UP:    xVel =    0; yVel = -100; break;
-                case SDLK_RIGHT: xVel =  100; yVel =    0; break;
-                case SDLK_DOWN:  xVel =    0; yVel =  100; break;
-                case SDLK_LEFT:  xVel = -100; yVel =    0; break;
+                case SDLK_RIGHT: xVel =  100; break;
+                case SDLK_DOWN:  yVel = -100; break;
+                case SDLK_LEFT:  xVel = -100; break;
                 default: // Ignore other keys.
             }
         }
@@ -115,6 +115,7 @@ void updateGame(Duration elapsedTime)
 
     playerRect.x += cast(int)(xVel * elapsedSeconds);
     playerRect.y += cast(int)(yVel * elapsedSeconds);
+    yVel += gravity;
 }
 
 void renderGame(SDL_Surface *surface)

@@ -13,6 +13,7 @@ SDL_Rect playerRect = {
 
 int xVel = 100;
 int yVel = 0;
+int gravity = 10;
 
 SDL_Window *window;
 
