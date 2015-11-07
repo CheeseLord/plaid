@@ -4,6 +4,7 @@ import core.thread;
 
 import derelict.sdl2.sdl;
 
+import eventHandler;
 import globals;
 // import GTKTest;
 
@@ -41,7 +42,6 @@ void runGame()
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 
-    const int frameRate = 20;
     Duration frameLength = dur!"seconds"(1) / frameRate;
 
     MonoTime prevStartTime = MonoTime.currTime;
@@ -73,35 +73,6 @@ void runGame()
     }
 }
 
-void handleEvents()
-{
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        // Handle the next event here. To get the type of event (keypress,
-        // mouse motion, close window, etc.), look at event.type.
-        // For a list of possible event types, see
-        //     https://wiki.libsdl.org/SDL_EventType
-        //
-        // If the type is some sort of keypress, you'll want to look at the
-        // actual key that was pressed, stored in event.key.keysym. See
-        //     https://wiki.libsdl.org/SDL_Keysym
-        // for information on interpreting these. That page has links to the
-        // lists o key codes and scan codes.
-        if (event.type == SDL_QUIT) {
-            shouldQuit = true;
-        }
-        else if (event.type == SDL_KEYDOWN) {
-            switch (event.key.keysym.sym) {
-                case SDLK_UP:    xVel =    0; yVel = -100; break;
-                case SDLK_RIGHT: xVel =  100; break;
-                case SDLK_DOWN:  yVel = -100; break;
-                case SDLK_LEFT:  xVel = -100; break;
-                default: // Ignore other keys.
-            }
-        }
-    }
-}
-
 void updateGame(Duration elapsedTime)
 {
     // Convert the elaped time to seconds.
@@ -115,7 +86,7 @@ void updateGame(Duration elapsedTime)
 
     playerRect.x += cast(int)(xVel * elapsedSeconds);
     playerRect.y += cast(int)(yVel * elapsedSeconds);
-    yVel += gravity;
+    yVel += cast(int)(gravity * elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)

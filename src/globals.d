@@ -2,6 +2,9 @@ module globals;
 
 import derelict.sdl2.sdl;
 
+// Constants
+const int frameRate = 20;
+
 // TODO: Magic numbers bad.
 // TODO: Track coordinates in world coordinates, not screen coordinates.
 SDL_Rect playerRect = {
@@ -13,7 +16,7 @@ SDL_Rect playerRect = {
 
 int xVel = 100;
 int yVel = 0;
-int gravity = 10;
+int gravity = 200;
 
 SDL_Window *window;
 
