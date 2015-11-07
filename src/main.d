@@ -42,7 +42,6 @@ void runGame()
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 
-    const int frameRate = 20;
     Duration frameLength = dur!"seconds"(1) / frameRate;
 
     MonoTime prevStartTime = MonoTime.currTime;
@@ -87,6 +86,7 @@ void updateGame(Duration elapsedTime)
 
     playerRect.x += cast(int)(xVel * elapsedSeconds);
     playerRect.y += cast(int)(yVel * elapsedSeconds);
+    yVel += cast(int)(gravity * elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)
