@@ -9,9 +9,11 @@ ScreenPoint worldToScreenPoint(WorldPoint wPoint)
     double xScale = cast(double)(sViewRect.w) / cast(double)(wViewRect.w);
     double yScale = cast(double)(sViewRect.h) / cast(double)(wViewRect.h);
 
-    // Note that y is inverted: positive y is up in the world, but down on the
-    // screen.
-    // FIXME [#10]: I'm pretty sure these are wrong.
+    // y is inverted: positive y is up in the world, but down on the screen.
+    // This means that in the world, the 'y' in a Point refers to the distance
+    // from the bottom, but in the screen, it refers to the distance from the
+    // top. As such, when converting, we need to subtract it from the height
+    // of the ViewRect.
     ScreenPoint sPoint = {
         x: cast(int)(sViewRect.x + xScale * (wPoint.x - wViewRect.x)),
         y: cast(int)(sViewRect.y + sViewRect.h -
@@ -26,13 +28,15 @@ ScreenRect worldToScreenRect(WorldRect wRect)
     double xScale = cast(double)(sViewRect.w) / cast(double)(wViewRect.w);
     double yScale = cast(double)(sViewRect.h) / cast(double)(wViewRect.h);
 
-    // Convert the position.
-    WorldPoint  wPoint = {x: wRect.x, y: wRect.y};
-    ScreenPoint sPoint = worldToScreenPoint(wPoint);
+    // We can't simply convert (x, y), because (x, y) is the bottom-left corner
+    // in the world and the top-left corner on the screen. Instead, compute the
+    // top-left corner and then convert it.
+    WorldPoint  wTopLeft = {x: wRect.x, y: wRect.y + wRect.h};
+    ScreenPoint sTopLeft = worldToScreenPoint(wTopLeft);
 
     ScreenRect sRect = {
-        x: sPoint.x,
-        y: sPoint.y,
+        x: sTopLeft.x,
+        y: sTopLeft.y,
         w: cast(int)(wRect.w * xScale),
         h: cast(int)(wRect.h * yScale),
     };
