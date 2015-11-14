@@ -1,14 +1,14 @@
-import std.stdio;
-import core.time;
 import core.thread;
+import core.time;
+import std.stdio;
 
 import derelict.sdl2.sdl;
 
+import eventHandler;
+import geometry;
 import geometry_types;
 import globals;
-import geometry;
-import eventHandler;
-// import GTKTest;
+import physics;
 
 void main()
 {
@@ -86,9 +86,10 @@ void updateGame(Duration elapsedTime)
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
     }
 
+    applyGravity(player, elapsedSeconds);
+    enforceGround(player);
     player.rect.x += player.vel.x * elapsedSeconds;
     player.rect.y += player.vel.y * elapsedSeconds;
-    player.vel.y  += GRAVITY * elapsedSeconds;
 }
 
 void renderGame(SDL_Surface *surface)
