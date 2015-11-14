@@ -1,0 +1,9 @@
+src/
+  main (game loop)
+  globals (see name)
+  event_handler (see name)
+  
+  geometry_types (rectangles, points)
+  entity_types (structs for storing infomation about game objects)
+  
+  geometry (spacial mapping)
