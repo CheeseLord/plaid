@@ -6,9 +6,9 @@ import geometry_types;
 import entity_types;
 
 // Constants
-immutable int frameRate = 20;
+immutable int FRAME_RATE = 20;
 
-immutable int gravity = -50;
+immutable int GRAVITY = -50;
 
 
 // Game state

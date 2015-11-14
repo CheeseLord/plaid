@@ -44,7 +44,7 @@ void runGame()
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 
-    Duration frameLength = dur!"seconds"(1) / frameRate;
+    Duration frameLength = dur!"seconds"(1) / FRAME_RATE;
 
     MonoTime prevStartTime = MonoTime.currTime;
 
@@ -88,7 +88,7 @@ void updateGame(Duration elapsedTime)
 
     player.rect.x += player.vel.x * elapsedSeconds;
     player.rect.y += player.vel.y * elapsedSeconds;
-    player.vel.y  += gravity * elapsedSeconds;
+    player.vel.y  += GRAVITY * elapsedSeconds;
 }
 
 void renderGame(SDL_Surface *surface)
