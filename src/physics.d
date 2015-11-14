@@ -12,17 +12,21 @@ void applyGravity(ref Player player, double elapsedSeconds)
 }
 
 
-// TODO [#12]: Get rid of this function.
-void enforceGround(ref Player player)
+void updatePosition(ref Player player, double elapsedSeconds)
 {
+    double GROUND_HEIGHT = 20.0;
+
     debug(player_pos){
         writefln("x = %0.2f, y = %0.2f", player.rect.x, player.rect.y);
     }
-    double GROUND_HEIGHT = 20.0;
-    double EPSILON = 0.1;
-    if (player.rect.y < GROUND_HEIGHT - EPSILON) {
+
+    if (player.rect.y < GROUND_HEIGHT && player.vel.y <= 0) {
         player.rect.y = GROUND_HEIGHT;
         player.vel.y = 0;
+    }
+    else {
+        player.rect.x += player.vel.x * elapsedSeconds;
+        player.rect.y += player.vel.y * elapsedSeconds;
     }
 }
 

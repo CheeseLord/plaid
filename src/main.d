@@ -87,9 +87,7 @@ void updateGame(Duration elapsedTime)
     }
 
     applyGravity(player, elapsedSeconds);
-    enforceGround(player);
-    player.rect.x += player.vel.x * elapsedSeconds;
-    player.rect.y += player.vel.y * elapsedSeconds;
+    updatePosition(player, elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)
