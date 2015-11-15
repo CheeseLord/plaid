@@ -42,6 +42,7 @@ bool setup()
     }
 
     // Create a window.
+    // TODO [#3]: Magic numbers bad.
     window = SDL_CreateWindow("Plaid",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         640, 480, SDL_WINDOW_OPENGL);
