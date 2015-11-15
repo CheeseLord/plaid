@@ -16,9 +16,12 @@ void main()
     // Old GTK test. Not used, for now at least.
     // testWindow();
 
-    setup();
-    runGame();
-    cleanup();
+    bool setupSucceeded = setup();
+    scope(exit) cleanup();
+
+    if (setupSucceeded) {
+        runGame();
+    }
 }
 
 void runGame()
