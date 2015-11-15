@@ -17,16 +17,16 @@ void updatePosition(ref Player player, double elapsedSeconds)
     double GROUND_HEIGHT = 20.0;
 
     debug(player_pos){
-        writefln("x = %0.2f, y = %0.2f", player.rect.x, player.rect.y);
+        writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
     }
 
-    if (player.rect.y < GROUND_HEIGHT && player.vel.y <= 0) {
-        player.rect.y = GROUND_HEIGHT;
+    if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+        player.rect.bottom = GROUND_HEIGHT;
         player.vel.y = 0;
     }
     else {
-        player.rect.x += player.vel.x * elapsedSeconds;
-        player.rect.y += player.vel.y * elapsedSeconds;
+        player.rect.left += player.vel.x * elapsedSeconds;
+        player.rect.bottom += player.vel.y * elapsedSeconds;
     }
 }
 
