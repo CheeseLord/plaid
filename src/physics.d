@@ -25,8 +25,8 @@ void updatePosition(ref Player player, double elapsedSeconds)
         player.vel.y = 0;
     }
     else {
-        player.rect.left += player.vel.x * elapsedSeconds;
-        player.rect.bottom += player.vel.y * elapsedSeconds;
+        player.rect.left = player.rect.left + player.vel.x * elapsedSeconds;
+        player.rect.bottom = player.rect.bottom + player.vel.y * elapsedSeconds;
     }
 }
 
