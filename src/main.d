@@ -9,34 +9,19 @@ import geometry;
 import geometry_types;
 import globals;
 import physics;
+import setup_cleanup;
 
 void main()
 {
     // Old GTK test. Not used, for now at least.
     // testWindow();
 
-    // Set up SDL.
-    DerelictSDL2.load();
-    SDL_Init(SDL_INIT_VIDEO);
+    bool setupSucceeded = setup();
+    scope(exit) cleanup();
 
-    // Create a window.
-    window = SDL_CreateWindow("Plaid",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        640, 480, SDL_WINDOW_OPENGL);
-
-    if (window is null) {
-        writefln("Error: failed to create window.");
-        return;
+    if (setupSucceeded) {
+        runGame();
     }
-
-    // Clean this all up when we're done.
-    scope (exit) {
-        writefln("Exiting.");
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-    }
-
-    runGame();
 }
 
 void runGame()
