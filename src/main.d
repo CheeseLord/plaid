@@ -73,6 +73,7 @@ void updateGame(Duration elapsedTime)
 
     applyGravity(player, elapsedSeconds);
     updatePosition(player, elapsedSeconds);
+    handleCollisions(player, elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)

@@ -46,3 +46,15 @@ ScreenRect worldToScreenRect(WorldRect wRect)
 
 // TODO [#11]: Screen to world
 
+
+bool rectsIntersect(WorldRect rectA, WorldRect rectB)
+{
+    // It's easier to check where we don't intersect.
+    if (rectA.right <= rectB.left  ) { return false; }
+    if (rectB.right <= rectA.left  ) { return false; }
+    if (rectA.top   <= rectB.bottom) { return false; }
+    if (rectB.top   <= rectA.bottom) { return false; }
+
+    return true;
+}
+
