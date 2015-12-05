@@ -27,6 +27,16 @@ Player player = {
     },
 };
 
+// TODO [#3]: Magic numbers bad.
+Platform platform1 = {
+    rect: {
+        x: 100,
+        y: 80,
+        w: 50,
+        h: 10,
+    },
+};
+
 
 // Other globals
 SDL_Window *window;

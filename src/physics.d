@@ -14,6 +14,7 @@ void applyGravity(ref Player player, double elapsedSeconds)
 
 void updatePosition(ref Player player, double elapsedSeconds)
 {
+    // TODO [#3]: Magic numbers bad.
     double GROUND_HEIGHT = 20.0;
 
     debug(player_pos){
