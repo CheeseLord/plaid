@@ -1,0 +1,33 @@
+---
+
+screen-view:
+    rect:
+        x: 0
+        y: 0
+        w: 640
+        h: 480
+
+world-view:
+    rect:
+        x: 0
+        y: 0
+        w: 200
+        h: 150
+
+player:
+    rect:
+        x: 20
+        y: 65
+        w: 20
+        h: 20
+    vel:
+        x: 30
+        y: 0
+
+platfoms:
+    - rect:
+        x: 100
+        y: 80
+        w: 50
+        h: 10
+
