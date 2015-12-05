@@ -36,9 +36,7 @@ void updatePosition(ref Player player, double elapsedSeconds)
 void handleCollisions(ref Player player, double elapsedSeconds)
 {
     if (rectsIntersect(player.rect, platform1.rect)) {
-        writefln("Player (%0.2f, %0.2f) intersects platform (%0.2f, %0.2f)", 
-            player.rect.left, player.rect.bottom,
-            platform1.rect.left, platform1.rect.bottom);
+        platform1.interactWithPlayer(platform1, player);
     }
 }
 

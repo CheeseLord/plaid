@@ -16,5 +16,6 @@ struct Player {
 
 struct Platform {
     HitRect rect;
+    void function(ref Platform, ref Player) interactWithPlayer;
 }
 

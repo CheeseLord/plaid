@@ -7,6 +7,7 @@ import derelict.util.exception;
 import yaml;
 
 import globals;
+import platform_functions;
 
 // Initialize everything. On success, return true. On failure, report the error
 // and return false.
@@ -101,6 +102,8 @@ void initialize_magic_numbers()
     platform1.rect.y = 80;
     platform1.rect.w = 50;
     platform1.rect.h = 10;
+    platform1.interactWithPlayer = scream;
+
     // Used for converting between world and screen coordinates.
     wViewRect.x = 0;
     wViewRect.y = 0;
