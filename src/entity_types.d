@@ -14,3 +14,7 @@ struct Player {
     Velocity vel;
 }
 
+struct Platform {
+    HitRect rect;
+}
+
