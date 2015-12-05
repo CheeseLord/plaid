@@ -7,5 +7,6 @@
     "targetType":   "executable",
     "dependencies": {
         "derelict-sdl2": "~>1.9.7",
+        "dyaml":         "~>0.5.2",
     }
 }

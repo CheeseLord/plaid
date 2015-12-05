@@ -4,6 +4,7 @@ import std.stdio;
 
 import derelict.sdl2.sdl;
 import derelict.util.exception;
+import yaml;
 
 import globals;
 
@@ -79,7 +80,15 @@ bool cleanup()
 }
 
 // TODO [#3]: Magic numbers bad.
-void initialize_magic_numbers(){
+void initialize_magic_numbers()
+{
+    Node configRoot = Loader("config/magic.yaml").load();
+    // TODO: Actually parse it.
+    // // This is so not Windows compatible it's not even funny.
+    // debug {
+    //     Dumper("/dev/tty").dump(configRoot);
+    // }
+
     // Game state
     player.rect.x = 20;
     player.rect.y = 65;
