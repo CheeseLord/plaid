@@ -40,6 +40,7 @@ bool setup()
                SDL_GetError());
         return false;
     }
+    initialize_magic_numbers();
 
     // Create a window.
     // TODO [#3]: Magic numbers bad.
@@ -60,6 +61,7 @@ bool setup()
 // caller can do about a failure to cleanup....
 bool cleanup()
 {
+    cleanup_objects();
     debug writefln("Exiting.");
 
     if (window !is null) {
@@ -74,5 +76,40 @@ bool cleanup()
     SDL_Quit();
 
     return true;
+}
+
+// TODO [#3]: Magic numbers bad.
+void initialize_magic_numbers(){
+    // Game state
+    player.rect.x = 20;
+    player.rect.y = 65;
+    player.rect.w = 20;
+    player.rect.h = 20;
+    player.vel.x = 30;
+    player.vel.y = 0;
+
+    platform1.rect.x = 100;
+    platform1.rect.y = 80;
+    platform1.rect.w = 50;
+    platform1.rect.h = 10;
+    // Used for converting between world and screen coordinates.
+    wViewRect.x = 0;
+    wViewRect.y = 0;
+    wViewRect.w = 200;
+    wViewRect.h = 150;
+
+    sViewRect.x = 0;
+    sViewRect.y = 0;
+    sViewRect.w = 640;
+    sViewRect.h = 480;
+    
+    // This variable is set to true when it's time to end the program -- perhaps
+    // because the user tried to close the window, or they clicked an in-game
+    // "Quit" button.
+    shouldQuit = false;
+}
+
+void cleanup_objects(){
+    // Nothing to do right now
 }
 
