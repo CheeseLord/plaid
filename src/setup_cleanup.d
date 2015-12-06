@@ -8,6 +8,7 @@ import yaml;
 
 import globals;
 import platform_functions;
+import yaml_parser;
 
 // Initialize everything. On success, return true. On failure, report the error
 // and return false.
@@ -84,11 +85,43 @@ bool cleanup()
 void initialize_magic_numbers()
 {
     Node configRoot = Loader("config/magic.yaml").load();
-    // TODO: Actually parse it.
     // // This is so not Windows compatible it's not even funny.
     // debug {
     //     Dumper("/dev/tty").dump(configRoot);
     // }
+
+    // FIXME: Finish this.
+    // This is a proof of concept for parsing these values from magic.yaml.
+    // It's not finished.
+
+    // Parse the YAML.
+    if (!configRoot.isMapping) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
+        return;
+    }
+
+    if (!configRoot.containsKey("screen-view")) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln(`Error: "screen-view" not present in `
+                                  `YAML file.`);
+        return;
+    }
+    Node screenViewNode = configRoot["screen-view"];
+    if (!screenViewNode.containsKey("rect")) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln(`Error: screen-view has no "rect".`);
+        return;
+    }
+    sViewRect = parseScreenRect(screenViewNode["rect"]);
+
+    // TODO: More YAML parsing code goes here.
+
+    ///// Old code to initialize sViewRect.
+    // sViewRect.x = 0;
+    // sViewRect.y = 0;
+    // sViewRect.w = 640;
+    // sViewRect.h = 480;
 
     // Game state
     player.rect.x = 20;
@@ -110,11 +143,6 @@ void initialize_magic_numbers()
     wViewRect.w = 200;
     wViewRect.h = 150;
 
-    sViewRect.x = 0;
-    sViewRect.y = 0;
-    sViewRect.w = 640;
-    sViewRect.h = 480;
-    
     // This variable is set to true when it's time to end the program -- perhaps
     // because the user tried to close the window, or they clicked an in-game
     // "Quit" button.
