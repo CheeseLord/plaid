@@ -71,9 +71,7 @@ void updateGame(Duration elapsedTime)
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
     }
 
-    applyGravity(player, elapsedSeconds);
-    updatePosition(player, elapsedSeconds);
-    handleCollisions(player, elapsedSeconds);
+    updateWorld(elapsedSeconds);
 }
 
 void renderGame(SDL_Surface *surface)

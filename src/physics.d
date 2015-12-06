@@ -7,13 +7,21 @@ private import geometry;
 private import globals;
 
 
-void applyGravity(ref Player player, double elapsedSeconds)
+void updateWorld(double elapsedSeconds)
+{
+    applyGravity(elapsedSeconds);
+    updatePosition(elapsedSeconds);
+    handleCollisions(elapsedSeconds);
+}
+
+
+void applyGravity(double elapsedSeconds)
 {
     player.vel.y += GRAVITY * elapsedSeconds;
 }
 
 
-void updatePosition(ref Player player, double elapsedSeconds)
+void updatePosition(double elapsedSeconds)
 {
     // TODO [#3]: Magic numbers bad.
     double GROUND_HEIGHT = 20.0;
@@ -33,7 +41,7 @@ void updatePosition(ref Player player, double elapsedSeconds)
 }
 
 
-void handleCollisions(ref Player player, double elapsedSeconds)
+void handleCollisions(double elapsedSeconds)
 {
     if (rectsIntersect(player.rect, platform1.rect)) {
         platform1.interactWithPlayer(platform1, player);

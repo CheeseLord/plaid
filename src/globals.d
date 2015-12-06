@@ -24,7 +24,6 @@ SDL_Window *window;
 bool shouldQuit;
 
 // Used for converting between world and screen coordinates.
-// TODO [#3]: Magic numbers bad
 WorldRect  wViewRect;
 ScreenRect sViewRect;
 
