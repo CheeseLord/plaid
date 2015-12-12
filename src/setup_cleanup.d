@@ -37,7 +37,7 @@ bool cleanup()
     success &= cleanupWindow();
     success &= cleanupLibraries();
 
-    return true;
+    return success;
 }
 
 // TODO [#3]: Magic numbers bad.
