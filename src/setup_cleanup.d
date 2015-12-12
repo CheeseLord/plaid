@@ -13,13 +13,31 @@ import yaml_parser;
 // Initialize everything. 
 bool setup()
 {
-    bool success = true;
+    debug writefln("Setting up.");
 
     initializeMagicNumbers();
+
+    bool success = true;
+
     success &= setupLibraries();
     success &= setupWindow();
+    success &= setupObjects();
 
     return success;
+}
+
+// Clean up everything that was initialized.
+bool cleanup()
+{
+    debug writefln("Cleaning up.");
+
+    bool success = true;
+
+    success &= cleanupObjects();
+    success &= cleanupWindow();
+    success &= cleanupLibraries();
+
+    return true;
 }
 
 // TODO [#3]: Magic numbers bad.
@@ -100,6 +118,16 @@ bool setupLibraries()
     return success;
 }
 
+// Clean up everything associated with each library we use.
+bool cleanupLibraries()
+{
+    bool success = true;
+
+    success &= cleanupSDL();
+
+    return success;
+}
+
 // Set up everything associated with SDL.
 bool setupSDL()
 {
@@ -136,6 +164,19 @@ bool setupSDL()
     return true;
 }
 
+// Clean up everything associated with SDL.
+bool cleanupSDL()
+{
+    // From http://wiki.libsdl.org/SDL_Quit:
+    //     "You should call this function even if you have already shutdown
+    //      each initialized subsystem with SDL_QuitSubSystem(). It is safe to
+    //      call this function even in the case of errors in initialization."
+    // Therefore, don't worry about checking if the SDL_Init succeeded.
+    SDL_Quit();
+
+    return true;
+}
+
 // Set up the game window.
 bool setupWindow()
 {
@@ -153,27 +194,6 @@ bool setupWindow()
     return true;
 }
 
-// Clean up everything that was initialized.
-bool cleanup()
-{
-    debug writefln("Exiting.");
-
-    bool success = true;
-
-    success &= cleanupObjects();
-    success &= cleanupWindow();
-    success &= cleanupLibraries();
-
-    return true;
-}
-
-// Clean up game objects.
-bool cleanupObjects()
-{
-    // Nothing to do right now
-    return true;
-}
-
 // Clean up the game window.
 bool cleanupWindow()
 {
@@ -184,26 +204,17 @@ bool cleanupWindow()
     return true;
 }
 
-// Clean up everything associated with each library we're using.
-bool cleanupLibraries()
+// Set up game objects.
+bool setupObjects()
 {
-    bool success = true;
-
-    success &= cleanupSDL();
-
-    return success;
+    // Nothing to do right now
+    return true;
 }
 
-// Clean up everything associated with SDL.
-bool cleanupSDL()
+// Clean up game objects.
+bool cleanupObjects()
 {
-    // From http://wiki.libsdl.org/SDL_Quit:
-    //     "You should call this function even if you have already shutdown
-    //      each initialized subsystem with SDL_QuitSubSystem(). It is safe to
-    //      call this function even in the case of errors in initialization."
-    // Therefore, don't worry about checking if the SDL_Init succeeded.
-    SDL_Quit();
-
+    // Nothing to do right now
     return true;
 }
 
