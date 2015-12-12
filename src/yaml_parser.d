@@ -4,6 +4,7 @@ import yaml;
 
 import entity_types;
 import geometry_types;
+import globals;
 
 
 Velocity parseVelocity(Node node)
@@ -93,3 +94,27 @@ class YamlParseException: Exception {
     }
 }
 
+
+void parseMagic(){
+    // Parse the YAML.
+    Node configRoot = Loader("config/magic.yaml").load();
+    if (!configRoot.isMapping) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
+        return;
+    }
+
+    if (!configRoot.containsKey("screen-view")) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln(`Error: "screen-view" not present in `
+                                  `YAML file.`);
+        return;
+    }
+    Node screenViewNode = configRoot["screen-view"];
+    if (!screenViewNode.containsKey("rect")) {
+        // FIXME: Error propagation.
+        std.stdio.stderr.writefln(`Error: screen-view has no "rect".`);
+        return;
+    }
+    sViewRect = parseScreenRect(screenViewNode["rect"]);
+}
