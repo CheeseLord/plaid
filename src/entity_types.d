@@ -1,6 +1,7 @@
 module entity_types;
 
-import geometry_types;
+private import geometry_types;
+public  import geometry_types: WorldPoint;
 
 alias HitRect = WorldRect;
 
