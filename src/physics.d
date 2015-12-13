@@ -50,10 +50,6 @@ void updatePosition(double elapsedSeconds)
         // interaction are before we try to generalize.
         platform1.interactWithPlayer(platform1, player);
 
-        debug {
-            writefln("collision happened: direction is %s", collisionDirection);
-        }
-
         // For now, the only type of platform is the kind that just stops the
         // player.
         newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
@@ -144,20 +140,14 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
         else
             collisionFraction = (intersection.x - start.x) / (end.x - start.x);
 
-        debug writefln("Is it a %s collision?", maybeCollisionDir);
-        debug writefln("    x: %s --> %s", start.x, end.x);
-        debug writefln("    y: %s --> %s", start.y, end.y);
         if     ((maybeCollisionDir == Direction.RIGHT && end.x > start.x) ||
                 (maybeCollisionDir == Direction.LEFT  && end.x < start.x) ||
                 (maybeCollisionDir == Direction.UP    && end.y > start.y) ||
                 (maybeCollisionDir == Direction.DOWN  && end.y < start.y)) {
-            debug writefln("    ### Yes.");
             collisionTime      = elapsedTime * collisionFraction;
             collisionDirection = maybeCollisionDir;
             return true;
         }
-        else
-            debug writefln("    --- No.");
     }
 
     return false;
@@ -168,6 +158,8 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
  * 'start' to 'end'; the obstacle is located at 'obstacle'. If it does collide,
  * set firstIntersection to the first coordinates along the point's trajectory
  * at which it intersects the obstacle.
+ *
+ * FIXME: Make this comment accurate w/r/t collisionDirection.
  */
 private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
                                   HitRect obstacle,
@@ -263,8 +255,11 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         // In this case, the intersection happens immediately.
         firstIntersection  = start;
 
-        // Calculate the collision direction based on the "quadrant" we're in.
-        // FIXME: Comment better.
+        // Calculate the collision direction based on which edge we're
+        // "closest" to. More precisely, divide the obstacle rect into the
+        // quadrants formed by its two diagonals; whichever quadrant the point
+        // falls in, treat the collision as if it were entering the obstacle
+        // through the corresponding edge.
         if     (abs(start.x - obstacle.centerX) / obstacle.w >
                 abs(start.y - obstacle.centerY) / obstacle.h) {
             if (start.x < obstacle.centerX)
