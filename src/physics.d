@@ -34,7 +34,7 @@ void updatePosition(double elapsedSeconds)
     double    collisionTime;
     Direction collisionDirection;
 
-    debug (player_pos){
+    debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
     }
 
@@ -49,6 +49,10 @@ void updatePosition(double elapsedSeconds)
         // interaction. But for now, we need to figure out what the types of
         // interaction are before we try to generalize.
         platform1.interactWithPlayer(platform1, player);
+
+        debug {
+            writefln("collision happened: direction is %s", collisionDirection);
+        }
 
         // For now, the only type of platform is the kind that just stops the
         // player.
@@ -140,14 +144,20 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
         else
             collisionFraction = (intersection.x - start.x) / (end.x - start.x);
 
+        debug writefln("Is it a %s collision?", maybeCollisionDir);
+        debug writefln("    x: %s --> %s", start.x, end.x);
+        debug writefln("    y: %s --> %s", start.y, end.y);
         if     ((maybeCollisionDir == Direction.RIGHT && end.x > start.x) ||
                 (maybeCollisionDir == Direction.LEFT  && end.x < start.x) ||
                 (maybeCollisionDir == Direction.UP    && end.y > start.y) ||
                 (maybeCollisionDir == Direction.DOWN  && end.y < start.y)) {
+            debug writefln("    ### Yes.");
             collisionTime      = elapsedTime * collisionFraction;
             collisionDirection = maybeCollisionDir;
             return true;
         }
+        else
+            debug writefln("    --- No.");
     }
 
     return false;
@@ -258,15 +268,15 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         if     (abs(start.x - obstacle.centerX) / obstacle.w >
                 abs(start.y - obstacle.centerY) / obstacle.h) {
             if (start.x < obstacle.centerX)
-                collisionDirection = Direction.LEFT;
-            else
                 collisionDirection = Direction.RIGHT;
+            else
+                collisionDirection = Direction.LEFT;
         }
         else {
             if (start.y < obstacle.centerY)
-                collisionDirection = Direction.DOWN;
-            else
                 collisionDirection = Direction.UP;
+            else
+                collisionDirection = Direction.DOWN;
         }
 
         return true;
