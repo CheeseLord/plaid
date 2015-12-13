@@ -2,10 +2,14 @@ module physics;
 
 private import std.stdio;
 private import std.math;
+private import std.algorithm;
 
 private import entity_types;
 private import geometry;
 private import globals;
+
+
+enum Direction {NO_DIRECTION, LEFT, UP, RIGHT, DOWN};
 
 
 void updateWorld(double elapsedSeconds)
@@ -26,10 +30,11 @@ void updatePosition(double elapsedSeconds)
     // TODO [#3]: Magic numbers bad.
     double GROUND_HEIGHT = 20.0;
 
-    HitRect newPlayerRect = player.rect;
-    double  collisionTime;
+    HitRect   newPlayerRect = player.rect;
+    double    collisionTime;
+    Direction collisionDirection;
 
-    debug(player_pos){
+    debug (player_pos){
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
     }
 
@@ -37,8 +42,9 @@ void updatePosition(double elapsedSeconds)
     newPlayerRect.y = player.rect.y + player.vel.y * elapsedSeconds;
 
     // For now, the only platform is platform1.
+    // It only counts as a collision if the player is moving into the platform.
     if (entityCollides(player.rect, newPlayerRect, platform1.rect,
-                       elapsedSeconds, collisionTime)) {
+                       elapsedSeconds, collisionTime, collisionDirection)) {
         // Eventually, we'll use these functions to determine the type of the
         // interaction. But for now, we need to figure out what the types of
         // interaction are before we try to generalize.
@@ -49,8 +55,20 @@ void updatePosition(double elapsedSeconds)
         newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
         newPlayerRect.y = player.rect.y + player.vel.y * collisionTime;
 
-        player.vel.x = 0;
-        player.vel.y = 0;
+        // Set only the component of the player's velocity that moves them into
+        // the platform to zero. Leave the other component unchanged.
+        switch (collisionDirection) {
+            case Direction.RIGHT:
+            case Direction.LEFT:
+                player.vel.x = 0;
+                break;
+            case Direction.UP:
+            case Direction.DOWN:
+                player.vel.y = 0;
+                break;
+            default:
+                break;
+        }
 
         // TODO: Simulate gravity (and maybe other things?) for the rest of the
         // frame.
@@ -68,14 +86,30 @@ void updatePosition(double elapsedSeconds)
 /**
  * Check if an entity collides with an obstacle. If so, then also set
  * collisionTime to the amount of time elapsed when the entity first touches
- * the obstacle. The obstacle is located at 'obstacle', and assumed not to
- * move. The entity moves from 'start' to 'end', over a duration 'elapsedTime'.
- * The entity's start and end must have the same width and height, and at least
- * one of its x and y must change.
+ * the obstacle and collisionDirection to the direction in which the collision
+ * occurs. collisionDirection is determined based on the edge of the obstacle
+ * that the entity collides with, not the entity's velocity -- so if the entity
+ * is moving quickly to the right and just a little bit down, and it skims the
+ * top edge of the obstacle, that's a downward collision, not a rightward
+ * collision.
+ *
+ * A collision only counts as a collision if the component of the entity's
+ * velocity across the edge of the obstacle that it collides with is nonzero.
+ * So, if the entity is moving perfectly vertically, it cannot collide with the
+ * left or right edge of the obstacle.
+ *
+ * The obstacle is located at 'obstacle', and assumed not to move. The entity
+ * moves from 'start' to 'end', over a duration 'elapsedTime'.  The entity's
+ * start and end must have the same width and height, and at least one of its x
+ * and y must change.
  */
 private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
-                            double elapsedTime, out double collisionTime)
+                            double elapsedTime, out double collisionTime,
+                            out Direction collisionDirection)
 {
+    // The direction of the collision, if there is a collision.
+    Direction maybeCollisionDir;
+
     // The entity is assumed not to change size; that would complicate the
     // collision-detection code considerably.
     assert(abs(end.w - start.w) <  1.0e-6);
@@ -99,7 +133,7 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
 
     WorldPoint intersection;
     if (trajectoryIntersects(start.BL, end.BL, expandedObstacle,
-                             intersection)) {
+                             intersection, maybeCollisionDir)) {
         // What fraction of the elapsedTime elapsed before the collision?
         double collisionFraction;
 
@@ -111,12 +145,17 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
         else
             collisionFraction = (intersection.x - start.x) / (end.x - start.x);
 
-        collisionTime = elapsedTime * collisionFraction;
-        return true;
+        if     ((maybeCollisionDir == Direction.RIGHT && end.x > start.x) ||
+                (maybeCollisionDir == Direction.LEFT  && end.x < start.x) ||
+                (maybeCollisionDir == Direction.UP    && end.y > start.y) ||
+                (maybeCollisionDir == Direction.DOWN  && end.y < start.y)) {
+            collisionTime      = elapsedTime * collisionFraction;
+            collisionDirection = maybeCollisionDir;
+            return true;
+        }
     }
-    else {
-        return false;
-    }
+
+    return false;
 }
 
 /**
@@ -127,7 +166,8 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
  */
 private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
                                   HitRect obstacle,
-                                  out WorldPoint firstIntersection)
+                                  out WorldPoint firstIntersection,
+                                  out Direction  collisionDirection)
 {
     // High-level explanation:
     //
@@ -179,6 +219,7 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         isStartOutside = true;
         if (segmentIntersectsVertical(start, end, obstacle.TL, obstacle.BL,
                                       firstIntersection)) {
+            collisionDirection = Direction.RIGHT;
             return true;
         }
     }
@@ -187,6 +228,7 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         isStartOutside = true;
         if (segmentIntersectsVertical(start, end, obstacle.TR, obstacle.BR,
                                       firstIntersection)) {
+            collisionDirection = Direction.LEFT;
             return true;
         }
     }
@@ -196,6 +238,7 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         isStartOutside = true;
         if (segmentIntersectsHorizontal(start, end, obstacle.TL, obstacle.TR,
                                         firstIntersection)) {
+            collisionDirection = Direction.DOWN;
             return true;
         }
     }
@@ -204,6 +247,7 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
         isStartOutside = true;
         if (segmentIntersectsHorizontal(start, end, obstacle.BL, obstacle.BR,
                                         firstIntersection)) {
+            collisionDirection = Direction.UP;
             return true;
         }
     }
@@ -211,7 +255,8 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
     // If none of the four checks above triggered, then the only region we can
     // be in is C. In this case, the answer is easy.
     if (!isStartOutside) {
-        firstIntersection = start;
+        firstIntersection  = start;
+        collisionDirection = Direction.NO_DIRECTION;
         return true;
     }
 
