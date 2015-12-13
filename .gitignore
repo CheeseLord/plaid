@@ -6,6 +6,9 @@ __dummy.html
 *.obj
 docs
 
+# vim .swp files, so I can just "git add ." without catching them.
+.*.swp
+
 # TODO
 # kronmillerg, 19 Sep 2015 -- Temporarily .gitignore dub.selections.json
 dub.selections.json
