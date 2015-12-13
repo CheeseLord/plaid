@@ -9,7 +9,7 @@ private import geometry;
 private import globals;
 
 
-enum Direction {NO_DIRECTION, LEFT, UP, RIGHT, DOWN};
+enum Direction {LEFT, UP, RIGHT, DOWN};
 
 
 void updateWorld(double elapsedSeconds)
@@ -58,16 +58,11 @@ void updatePosition(double elapsedSeconds)
         // Set only the component of the player's velocity that moves them into
         // the platform to zero. Leave the other component unchanged.
         switch (collisionDirection) {
-            case Direction.RIGHT:
-            case Direction.LEFT:
-                player.vel.x = 0;
-                break;
-            case Direction.UP:
-            case Direction.DOWN:
-                player.vel.y = 0;
-                break;
-            default:
-                break;
+            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
+            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
+            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
+            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
+            default: break;
         }
 
         // TODO: Simulate gravity (and maybe other things?) for the rest of the
@@ -253,10 +248,27 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
     }
 
     // If none of the four checks above triggered, then the only region we can
-    // be in is C. In this case, the answer is easy.
+    // be in is C.
     if (!isStartOutside) {
+        // In this case, the intersection happens immediately.
         firstIntersection  = start;
-        collisionDirection = Direction.NO_DIRECTION;
+
+        // Calculate the collision direction based on the "quadrant" we're in.
+        // FIXME: Comment better.
+        if     (abs(start.x - obstacle.centerX) / obstacle.w >
+                abs(start.y - obstacle.centerY) / obstacle.h) {
+            if (start.x < obstacle.centerX)
+                collisionDirection = Direction.LEFT;
+            else
+                collisionDirection = Direction.RIGHT;
+        }
+        else {
+            if (start.y < obstacle.centerY)
+                collisionDirection = Direction.DOWN;
+            else
+                collisionDirection = Direction.UP;
+        }
+
         return true;
     }
 
