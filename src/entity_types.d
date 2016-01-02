@@ -2,12 +2,13 @@ module entity_types;
 
 private import geometry_types;
 public  import geometry_types: WorldPoint;
+private import units;
 
 alias HitRect = WorldRect;
 
 struct Velocity {
-    double x;
-    double y;
+    world_velocity x;
+    world_velocity y;
 }
 
 struct Player {

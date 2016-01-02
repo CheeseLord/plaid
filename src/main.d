@@ -4,12 +4,13 @@ import std.stdio;
 
 import derelict.sdl2.sdl;
 
-import eventHandler;
-import geometry;
-import geometry_types;
-import globals;
-import physics;
-import setup_cleanup;
+private import eventHandler;
+private import geometry;
+private import geometry_types;
+private import globals;
+private import physics;
+private import units;
+private import setup_cleanup;
 
 void main()
 {
@@ -65,7 +66,8 @@ void updateGame(Duration elapsedTime)
     // Convert the elaped time to seconds.
     long secs, nsecs;
     elapsedTime.split!("seconds", "nsecs")(secs, nsecs);
-    double elapsedSeconds = cast(double)(secs) + 1.0e-9 * cast(double)(nsecs);
+    world_time elapsedSeconds = cast(world_time)(secs) +
+                                1.0e-9 * cast(world_time)(nsecs);
 
     debug {
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);

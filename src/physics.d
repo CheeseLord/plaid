@@ -7,32 +7,33 @@ private import std.algorithm;
 private import entity_types;
 private import geometry;
 private import globals;
+private import units;
 
 
 enum Direction {LEFT, UP, RIGHT, DOWN};
 
 
-void updateWorld(double elapsedSeconds)
+void updateWorld(world_time elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
     updatePosition(elapsedSeconds);
 }
 
 
-void applyGravity(double elapsedSeconds)
+void applyGravity(world_time elapsedSeconds)
 {
     player.vel.y += GRAVITY * elapsedSeconds;
 }
 
 
-void updatePosition(double elapsedSeconds)
+void updatePosition(world_time elapsedSeconds)
 {
     // TODO [#3]: Magic numbers bad.
-    double GROUND_HEIGHT = 20.0;
+    world_length GROUND_HEIGHT = 20.0;
 
-    HitRect   newPlayerRect = player.rect;
-    double    collisionTime;
-    Direction collisionDirection;
+    HitRect    newPlayerRect = player.rect;
+    world_time collisionTime;
+    Direction  collisionDirection;
 
     debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
@@ -99,7 +100,8 @@ void updatePosition(double elapsedSeconds)
  * and y must change.
  */
 private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
-                            double elapsedTime, out double collisionTime,
+                            world_time elapsedTime,
+                            out world_time collisionTime,
                             out Direction collisionDirection)
 {
     // The direction of the collision, if there is a collision.
@@ -293,7 +295,7 @@ private bool segmentIntersectsVertical(WorldPoint s1Start, WorldPoint s1End,
 {
     // s2Start.x and s2End.x are assumed equal.
     assert(abs(s2End.x - s2Start.x) < 1.0e-6);
-    double s2x = s2Start.x;
+    world_length s2x = s2Start.x;
 
     if     ((s1Start.x < s2x && s1End.x > s2x) ||
             (s1Start.x > s2x && s1End.x < s2x)) {
@@ -306,9 +308,9 @@ private bool segmentIntersectsVertical(WorldPoint s1Start, WorldPoint s1End,
         //      intersectY - s1Start.y       s1End.y - s1Start.y
         //     ------------------------  =  ---------------------
         //             s2x - s1Start.x       s1End.x - s1Start.x
-        double intersectY = (s1End.y - s1Start.y) / (s1End.x - s1Start.x) *
-                            (s2x - s1Start.x) +
-                            s1Start.y;
+        world_length intersectY =
+            (s1End.y - s1Start.y) / (s1End.x - s1Start.x) * (s2x - s1Start.x) +
+            s1Start.y;
 
         if     ((s2Start.y < intersectY && intersectY < s2End.y) ||
                 (s2Start.y > intersectY && intersectY > s2End.y)) {
@@ -333,7 +335,7 @@ private bool segmentIntersectsHorizontal(WorldPoint s1Start, WorldPoint s1End,
 {
     // s2Start.y and s2End.y are assumed equal.
     assert(abs(s2End.y - s2Start.y) < 1.0e-6);
-    double s2y = s2Start.y;
+    world_length s2y = s2Start.y;
 
     if     ((s1Start.y < s2y && s1End.y > s2y) ||
             (s1Start.y > s2y && s1End.y < s2y)) {
@@ -346,9 +348,9 @@ private bool segmentIntersectsHorizontal(WorldPoint s1Start, WorldPoint s1End,
         //      intersectX - s1Start.x       s1End.x - s1Start.x
         //     ------------------------  =  ---------------------
         //             s2y - s1Start.y       s1End.y - s1Start.y
-        double intersectX = (s1End.x - s1Start.x) / (s1End.y - s1Start.y) *
-                            (s2y - s1Start.y) +
-                            s1Start.x;
+        world_length intersectX =
+            (s1End.x - s1Start.x) / (s1End.y - s1Start.y) * (s2y - s1Start.y) +
+            s1Start.x;
 
         if     ((s2Start.x < intersectX && intersectX < s2End.x) ||
                 (s2Start.x > intersectX && intersectX > s2End.x)) {

@@ -2,9 +2,10 @@ module yaml_parser;
 
 import yaml;
 
-import entity_types;
-import geometry_types;
-import globals;
+private import entity_types;
+private import geometry_types;
+private import globals;
+private import units;
 
 
 Velocity parseVelocity(Node node)
@@ -24,8 +25,8 @@ Velocity parseVelocity(Node node)
     }
 
     Velocity ret = {
-        x: node["x"].as!double,
-        y: node["y"].as!double,
+        x: node["x"].as!world_velocity,
+        y: node["y"].as!world_velocity,
     };
     return ret;
 }
@@ -49,10 +50,10 @@ HitRect parseHitRect(Node node)
     }
 
     HitRect ret = {
-        x: node["x"].as!double,
-        y: node["y"].as!double,
-        w: node["w"].as!double,
-        h: node["h"].as!double,
+        x: node["x"].as!world_length,
+        y: node["y"].as!world_length,
+        w: node["w"].as!world_length,
+        h: node["h"].as!world_length,
     };
     return ret;
 }
