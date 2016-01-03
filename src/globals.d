@@ -8,7 +8,7 @@ import entity_types;
 // Constants
 immutable int FRAME_RATE = 20;
 
-immutable int GRAVITY = -50;
+immutable double GRAVITY = -50;
 
 
 // Game state
