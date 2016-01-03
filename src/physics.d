@@ -137,6 +137,11 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
     assert(abs(end.h - start.h) <  1.0e-6);
 
     // The entity must move.
+    // FIXME [#15]: The caller doesn't check for this case. Currently, that
+    // probably won't cause a failure; the easiest way for the player's
+    // position to stay constant is if they're on the ground, but the code to
+    // cap the player's position at the ground is run after this code, so when
+    // this function is called, start and end won't actually be the same.
     assert(abs(end.y - start.y) >= 1.0e-6 ||
            abs(end.x - start.x) >= 1.0e-6);
 
