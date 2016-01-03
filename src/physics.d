@@ -145,6 +145,15 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
         else
             collisionFraction = (intersection.x - start.x) / (end.x - start.x);
 
+        // A collision only counts as a collision if the entity is moving
+        // toward the edge of the obstacle with which it collides. For example,
+        // in order to collide with the left edge of an obstacle, the entity
+        // has to actually be moving to the right. This check is needed to
+        // prevent the player from getting "stuck" to a platform -- without it,
+        // once the player is touching a platform, we detect a collision right
+        // at the start of every frame, even if the player is trying to move
+        // away from the platform.
+        // TODO [#16]: Will this actually be necessary once we fix #12?
         if     ((maybeCollisionDir == Direction.RIGHT && end.x > start.x) ||
                 (maybeCollisionDir == Direction.LEFT  && end.x < start.x) ||
                 (maybeCollisionDir == Direction.UP    && end.y > start.y) ||
@@ -162,9 +171,11 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
  * Check if a moving point collides with an obstacle. The point moves from
  * 'start' to 'end'; the obstacle is located at 'obstacle'. If it does collide,
  * set firstIntersection to the first coordinates along the point's trajectory
- * at which it intersects the obstacle.
- *
- * FIXME [#14]: Make this comment accurate w/r/t collisionDirection.
+ * at which it intersects the obstacle and collisionDirection to the direction
+ * of the collision. The direction of the collision is determined according to
+ * which edge of the obstacle's HitRect the point enters through: for example,
+ * if the point enters through the left edge, then this is a rightward
+ * collision.
  */
 private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
                                   HitRect obstacle,
@@ -188,8 +199,8 @@ private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
     //       BL  .   B   .  BR
     //           .       .
     //
-    // If it's in C, then our job is easy: the answer is "yes, the point
-    // collides with the obstacle, and its first intersection is start."
+    // If it's in C, then the point definitely collides with the obstacle, and
+    // its first intersection is start.
     //
     // If it's not in C, then the only way the point can collide with the
     // obstacle is if its trajectory intersects one of the four edges of the
