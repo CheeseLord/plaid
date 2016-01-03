@@ -65,8 +65,8 @@ void updatePosition(double elapsedSeconds)
             default: break;
         }
 
-        // TODO: Simulate gravity (and maybe other things?) for the rest of the
-        // frame.
+        // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
+        // of the frame.
     }
 
     if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
@@ -159,7 +159,7 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
  * set firstIntersection to the first coordinates along the point's trajectory
  * at which it intersects the obstacle.
  *
- * FIXME: Make this comment accurate w/r/t collisionDirection.
+ * FIXME [#14]: Make this comment accurate w/r/t collisionDirection.
  */
 private bool trajectoryIntersects(WorldPoint start, WorldPoint end,
                                   HitRect obstacle,

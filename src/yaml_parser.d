@@ -99,20 +99,20 @@ void parseMagic(){
     // Parse the YAML.
     Node configRoot = Loader("config/magic.yaml").load();
     if (!configRoot.isMapping) {
-        // FIXME: Error propagation.
+        // TODO [#13]: Error propagation.
         std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
         return;
     }
 
     if (!configRoot.containsKey("screen-view")) {
-        // FIXME: Error propagation.
+        // TODO [#13]: Error propagation.
         std.stdio.stderr.writefln(`Error: "screen-view" not present in `
                                   `YAML file.`);
         return;
     }
     Node screenViewNode = configRoot["screen-view"];
     if (!screenViewNode.containsKey("rect")) {
-        // FIXME: Error propagation.
+        // TODO [#13]: Error propagation.
         std.stdio.stderr.writefln(`Error: screen-view has no "rect".`);
         return;
     }
