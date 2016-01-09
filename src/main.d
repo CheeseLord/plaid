@@ -77,10 +77,13 @@ void updateGame(Duration elapsedTime)
 void renderGame(SDL_Surface *surface)
 {
     ScreenRect sPlayerRect   = worldToScreenRect(player.rect);
-    ScreenRect sPlatformRect = worldToScreenRect(platform1.rect);
+    ScreenRect sPlatform1Rect = worldToScreenRect(platform1.rect);
+    ScreenRect sPlatform2Rect = worldToScreenRect(platform2.rect);
 
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
-    SDL_FillRect(surface, &sPlatformRect,
+    SDL_FillRect(surface, &sPlatform1Rect,
+                 SDL_MapRGB(surface.format, 127, 0, 0));
+    SDL_FillRect(surface, &sPlatform2Rect,
                  SDL_MapRGB(surface.format, 127, 0, 0));
     SDL_FillRect(surface, &sPlayerRect, SDL_MapRGB(surface.format, 0, 0, 0));
 }
