@@ -7,6 +7,39 @@ import geometry_types;
 import globals;
 
 
+T parseYamlNode(T)(Node node)
+{
+    enum int NUM_FIELDS = T.tupleof.length;
+    T ret;
+
+    if (!node.isMapping) {
+        throw new YamlParseException("Cannot parse node as " ~
+            __traits(identifier, T) ~ ": node is not a mapping.");
+    }
+
+    foreach (i, ref field; ret.tupleof) {
+        if (!node.containsKey(__traits(identifier, ret.tupleof[i]))) {
+            throw new YamlParseException("Cannot parse node as " ~
+                __traits(identifier, T) ~ ": node has no " ~
+                __traits(identifier, ret.tupleof[i]) ~ " field.");
+        }
+
+        // FIXME: Recurse.
+        field = node[__traits(identifier, ret.tupleof[i])].as!(typeof(field));
+    }
+
+    if (node.length > NUM_FIELDS) {
+        throw new YamlParseException("Cannot parse node as " ~
+            __traits(identifier, T) ~ ": node contains unrecognized fields.");
+    }
+
+    return ret;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+version (none) {
+
 Velocity parseVelocity(Node node)
 {
     if (!node.isMapping) {
@@ -84,6 +117,9 @@ ScreenRect parseScreenRect(Node node)
     return ret;
 }
 
+}
+///////////////////////////////////////////////////////////////////////////////
+
 
 
 class YamlParseException: Exception {
@@ -116,5 +152,6 @@ void parseMagic(){
         std.stdio.stderr.writefln(`Error: screen-view has no "rect".`);
         return;
     }
-    sViewRect = parseScreenRect(screenViewNode["rect"]);
+    // sViewRect = parseScreenRect(screenViewNode["rect"]);
+    sViewRect = parseYamlNode!ScreenRect(screenViewNode["rect"]);
 }
