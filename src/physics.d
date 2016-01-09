@@ -65,8 +65,8 @@ void updatePosition(double elapsedSeconds)
             default: break;
         }
 
-        // TODO: Simulate gravity (and maybe other things?) for the rest of the
-        // frame.
+        // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
+        // of the frame.
     }
     else if (entityCollides(player.rect, newPlayerRect, platform2.rect,
                             elapsedSeconds, collisionTime,
