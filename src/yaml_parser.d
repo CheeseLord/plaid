@@ -147,11 +147,5 @@ void parseMagic(){
         return;
     }
     Node screenViewNode = configRoot["screen-view"];
-    if (!screenViewNode.containsKey("rect")) {
-        // TODO [#13]: Error propagation.
-        std.stdio.stderr.writefln(`Error: screen-view has no "rect".`);
-        return;
-    }
-    // sViewRect = parseScreenRect(screenViewNode["rect"]);
-    sViewRect = parseYamlNode!ScreenRect(screenViewNode["rect"]);
+    sViewRect = parseYamlNode!ScreenRect(screenViewNode);
 }

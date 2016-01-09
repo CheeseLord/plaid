@@ -1,18 +1,16 @@
 ---
 
 screen-view:
-    rect:
-        x: 0
-        y: 0
-        w: 640
-        h: 480
+    x: 0
+    y: 0
+    w: 640
+    h: 480
 
 world-view:
-    rect:
-        x: 0
-        y: 0
-        w: 200
-        h: 150
+    x: 0
+    y: 0
+    w: 200
+    h: 150
 
 player:
     rect:
