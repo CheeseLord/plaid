@@ -95,8 +95,7 @@ void updatePosition(double elapsedSeconds)
  *
  * The obstacle is located at 'obstacle', and assumed not to move. The entity
  * moves from 'start' to 'end', over a duration 'elapsedTime'.  The entity's
- * start and end must have the same width and height, and at least one of its x
- * and y must change.
+ * start and end must have the same width and height.
  */
 private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
                             double elapsedTime, out double collisionTime,
@@ -110,14 +109,11 @@ private bool entityCollides(HitRect start, HitRect end, HitRect obstacle,
     assert(abs(end.w - start.w) <  1.0e-6);
     assert(abs(end.h - start.h) <  1.0e-6);
 
-    // The entity must move.
-    // FIXME [#15]: The caller doesn't check for this case. Currently, that
-    // probably won't cause a failure; the easiest way for the player's
-    // position to stay constant is if they're on the ground, but the code to
-    // cap the player's position at the ground is run after this code, so when
-    // this function is called, start and end won't actually be the same.
-    assert(abs(end.y - start.y) >= 1.0e-6 ||
-           abs(end.x - start.x) >= 1.0e-6);
+    // The later calculations will fail if the entity doesn't move, so handle
+    // that here as a special case.
+    if (abs(end.y - start.y) < 1.0e-6 && abs(end.x - start.x) < 1.0e-6) {
+        return false;
+    }
 
     // Expand obstacle left by the width of entity and down by the height of
     // entity. This allows us to check for collisions between the bottom-left
