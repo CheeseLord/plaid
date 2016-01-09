@@ -41,58 +41,33 @@ void updatePosition(double elapsedSeconds)
     newPlayerRect.x = player.rect.x + player.vel.x * elapsedSeconds;
     newPlayerRect.y = player.rect.y + player.vel.y * elapsedSeconds;
 
-    // For now, the only platforms are platform1 and platform2.
-    // It only counts as a collision if the player is moving into the platform.
-    if (entityCollides(player.rect, newPlayerRect, platform1.rect,
-                       elapsedSeconds, collisionTime, collisionDirection)) {
-        // Eventually, we'll use these functions to determine the type of the
-        // interaction. But for now, we need to figure out what the types of
-        // interaction are before we try to generalize.
-        platform1.interactWithPlayer(platform1, player);
+    foreach (platform; platforms) {
+        // It only counts as a collision if the player is moving into the platform.
+        if (entityCollides(player.rect, newPlayerRect, platform.rect,
+                           elapsedSeconds, collisionTime, collisionDirection)) {
+            // Eventually, we'll use these functions to determine the type of the
+            // interaction. But for now, we need to figure out what the types of
+            // interaction are before we try to generalize.
+            platform.interactWithPlayer(platform, player);
 
-        // For now, the only type of platform is the kind that just stops the
-        // player.
-        newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
-        newPlayerRect.y = player.rect.y + player.vel.y * collisionTime;
+            // For now, the only type of platform is the kind that just stops the
+            // player.
+            newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
+            newPlayerRect.y = player.rect.y + player.vel.y * collisionTime;
 
-        // Set only the component of the player's velocity that moves them into
-        // the platform to zero. Leave the other component unchanged.
-        switch (collisionDirection) {
-            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
-            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
-            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
-            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
-            default: break;
+            // Set only the component of the player's velocity that moves them into
+            // the platform to zero. Leave the other component unchanged.
+            switch (collisionDirection) {
+                case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
+                case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
+                case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
+                case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
+                default: break;
+            }
+
+            // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
+            // of the frame.
         }
-
-        // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
-        // of the frame.
-    }
-    else if (entityCollides(player.rect, newPlayerRect, platform2.rect,
-                            elapsedSeconds, collisionTime,
-                            collisionDirection)) {
-        // Eventually, we'll use these functions to determine the type of the
-        // interaction. But for now, we need to figure out what the types of
-        // interaction are before we try to generalize.
-        platform2.interactWithPlayer(platform2, player);
-
-        // For now, the only type of platform is the kind that just stops the
-        // player.
-        newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
-        newPlayerRect.y = player.rect.y + player.vel.y * collisionTime;
-
-        // Set only the component of the player's velocity that moves them into
-        // the platform to zero. Leave the other component unchanged.
-        switch (collisionDirection) {
-            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
-            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
-            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
-            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
-            default: break;
-        }
-
-        // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
-        // of the frame.
     }
 
     if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {

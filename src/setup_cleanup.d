@@ -52,17 +52,17 @@ void initializeMagicNumbers()
     player.vel.x = 30;
     player.vel.y = 0;
 
-    platform1.rect.x = 100;
-    platform1.rect.y = 80;
-    platform1.rect.w = 50;
-    platform1.rect.h = 10;
-    platform1.interactWithPlayer = &scream;
+    platforms[0].rect.x = 100;
+    platforms[0].rect.y = 80;
+    platforms[0].rect.w = 50;
+    platforms[0].rect.h = 10;
+    platforms[0].interactWithPlayer = &scream;
 
-    platform2.rect.x = 80;
-    platform2.rect.y = 100;
-    platform2.rect.w = 50;
-    platform2.rect.h = 10;
-    platform2.interactWithPlayer = &scream;
+    platforms[1].rect.x = 80;
+    platforms[1].rect.y = 100;
+    platforms[1].rect.w = 50;
+    platforms[1].rect.h = 10;
+    platforms[1].interactWithPlayer = &scream;
 
     // Used for converting between world and screen coordinates.
     wViewRect.x = 0;

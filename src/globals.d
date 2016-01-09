@@ -13,8 +13,7 @@ immutable double GRAVITY = -50;
 
 // Game state
 Player player;
-Platform platform1;
-Platform platform2;
+Platform[2] platforms;
 
 // Other globals
 SDL_Window *window;
