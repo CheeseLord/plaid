@@ -148,4 +148,13 @@ void parseMagic(){
     }
     Node screenViewNode = configRoot["screen-view"];
     sViewRect = parseYamlNode!ScreenRect(screenViewNode);
+
+    if (!configRoot.containsKey("world-view")) {
+        // TODO [#13]: Error propagation.
+        std.stdio.stderr.writefln(`Error: "world-view" not present in `
+                                  `YAML file.`);
+        return;
+    }
+    Node worldViewNode = configRoot["world-view"];
+    wViewRect = parseYamlNode!WorldRect(worldViewNode);
 }

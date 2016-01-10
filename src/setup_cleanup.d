@@ -64,12 +64,6 @@ void initializeMagicNumbers()
     platforms[1].rect.h = 10;
     platforms[1].interactWithPlayer = &scream;
 
-    // Used for converting between world and screen coordinates.
-    wViewRect.x = 0;
-    wViewRect.y = 0;
-    wViewRect.w = 200;
-    wViewRect.h = 150;
-
     // This variable is set to true when it's time to end the program -- perhaps
     // because the user tried to close the window, or they clicked an in-game
     // "Quit" button.
