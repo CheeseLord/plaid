@@ -1,5 +1,7 @@
 module yaml_parser;
 
+import std.meta;
+
 import yaml;
 
 import entity_types;
@@ -131,7 +133,8 @@ class YamlParseException: Exception {
 }
 
 
-void parseMagic(){
+void parseMagic()
+{
     // Parse the YAML.
     Node configRoot = Loader("config/magic.yaml").load();
     if (!configRoot.isMapping) {
@@ -140,21 +143,19 @@ void parseMagic(){
         return;
     }
 
-    if (!configRoot.containsKey("screen-view")) {
-        // TODO [#13]: Error propagation.
-        std.stdio.stderr.writefln(`Error: "screen-view" not present in `
-                                  `YAML file.`);
-        return;
-    }
-    Node screenViewNode = configRoot["screen-view"];
-    sViewRect = parseYamlNode!ScreenRect(screenViewNode);
+    parseYamlMemberTo!(sViewRect)(configRoot, "screen-view");
+    parseYamlMemberTo!(wViewRect)(configRoot, "world-view");
+}
 
-    if (!configRoot.containsKey("world-view")) {
+// TODO: This could use a better name.
+void parseYamlMemberTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
+{
+    if (!configRoot.containsKey(yamlName)) {
         // TODO [#13]: Error propagation.
-        std.stdio.stderr.writefln(`Error: "world-view" not present in `
-                                  `YAML file.`);
+        std.stdio.stderr.writefln(`Error: "%s" not present in YAML file.`,
+                                  yamlName);
         return;
     }
-    Node worldViewNode = configRoot["world-view"];
-    wViewRect = parseYamlNode!WorldRect(worldViewNode);
+    Node nodeToParse = configRoot[yamlName];
+    parseTo = parseYamlNode!(typeof(parseTo))(nodeToParse);
 }
