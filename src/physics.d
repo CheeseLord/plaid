@@ -27,7 +27,7 @@ void applyGravity(double elapsedSeconds)
 
 void updateView(double elapsedSeconds)
 {
-    sViewRect.y += cast(int)(screenMovementRate * elapsedSeconds);
+    wViewRect.y += (worldScrollRate * elapsedSeconds);
 }
 
 
