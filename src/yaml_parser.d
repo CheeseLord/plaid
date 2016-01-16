@@ -5,6 +5,7 @@ import yaml;
 import entity_types;
 import geometry_types;
 import globals;
+import platform_functions;
 
 
 // To parse a struct, the YAML node must be an associative array whose keys
@@ -48,6 +49,57 @@ T parseYamlNode(T)(Node node) if (is(T == struct))
     }
 
     return ret;
+}
+
+T[] parseYamlNode(T: T[])(Node node)
+{
+    // The node must be a list (sequence).
+    if (!node.isSequence) {
+        throw new YamlParseException("Cannot parse node as " ~
+            __traits(identifier, T) ~ "[]: node is not a sequence.");
+    }
+
+    T[] ret;
+
+    foreach (Node child; node) {
+        ret ~= parseYamlNode!T(child);
+    }
+
+    return ret;
+}
+
+// Special case: for the 'interactWithPlayer' field of a Platform, we can't
+// just parse a function from the YAML. So instead, the YAML contains a string,
+// and we check it against a table to figure out which function to use.
+//
+// Note: this will work fine as long as the following statement holds:
+//     A YAML node is parsed as type 'void function(ref Platform, ref Player)'
+//     if and only if it is a Platform's interactWithPlayer function.
+// If we end up needing this solution for two things with the same type, then
+// we'll need to do something else. In that case, I think we can move the check
+// up a level: instead of having a specialization for the function type, we add
+// a special case to the struct parsing code where if we're parsing a Platform
+// and this field is named 'interactWithPlayer', then parse it as a string and
+// do the table lookup.
+T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
+{
+    // The node must be a string.
+    if (!node.isString) {
+        throw new YamlParseException("Cannot parse node as Platform collision "
+            "callback: node is not a string.");
+    }
+
+    immutable T[string] TABLE = [
+        "scream": &scream,
+    ];
+
+    if ((node.as!string) in TABLE) {
+        return TABLE[node.as!string];
+    }
+    else {
+        throw new YamlParseException("Cannot parse node as Platform collision "
+            "callback: no such callback '" ~ node.as!string ~ "'.");
+    }
 }
 
 // For any other type, assume it's a primitive and just use node.as to convert
@@ -164,6 +216,8 @@ void parseMagic()
 
     parseYamlMemberTo!(sViewRect)(configRoot, "screen-view");
     parseYamlMemberTo!(wViewRect)(configRoot, "world-view");
+    parseYamlMemberTo!(player)   (configRoot, "player");
+    parseYamlMemberTo!(platforms)(configRoot, "platforms");
 }
 
 // TODO: This could use a better name.

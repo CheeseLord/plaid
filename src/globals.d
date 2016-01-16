@@ -14,7 +14,7 @@ int screenMovementRate = 20;
 
 // Game state
 Player player;
-Platform[2] platforms;
+Platform[] platforms;
 
 // Other globals
 SDL_Window *window;
@@ -22,7 +22,7 @@ SDL_Window *window;
 // This variable is set to true when it's time to end the program -- perhaps
 // because the user tried to close the window, or they clicked an in-game
 // "Quit" button.
-bool shouldQuit;
+bool shouldQuit = false;
 
 // Used for converting between world and screen coordinates.
 WorldRect  wViewRect;
