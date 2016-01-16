@@ -1,7 +1,5 @@
 module yaml_parser;
 
-import std.meta;
-
 import yaml;
 
 import entity_types;
@@ -9,16 +7,21 @@ import geometry_types;
 import globals;
 
 
-T parseYamlNode(T)(Node node)
+// To parse a struct, the YAML node must be an associative array whose keys
+// have exactly the same names as the fields of the struct.
+T parseYamlNode(T)(Node node) if (is(T == struct))
 {
     enum int NUM_FIELDS = T.tupleof.length;
     T ret;
 
+    // The node must be an associative array (mapping).
     if (!node.isMapping) {
         throw new YamlParseException("Cannot parse node as " ~
             __traits(identifier, T) ~ ": node is not a mapping.");
     }
 
+    // Iterate over all fields of ret. For each one, parse the corresponding
+    // key in the YAML associative array.
     foreach (i, ref field; ret.tupleof) {
         if (!node.containsKey(__traits(identifier, ret.tupleof[i]))) {
             throw new YamlParseException("Cannot parse node as " ~
@@ -26,8 +29,17 @@ T parseYamlNode(T)(Node node)
                 __traits(identifier, ret.tupleof[i]) ~ " field.");
         }
 
-        // FIXME: Recurse.
-        field = node[__traits(identifier, ret.tupleof[i])].as!(typeof(field));
+        // Get the value associated with the key whose name is the same as the
+        // name of this field. For example, if we're parsing ret.x, then we
+        // parse it from node["x"].
+        //
+        // Note: We need to use __traits(identifier, ret.tupleof[i]) rather
+        // than __traits(identifier, field) because the latter is just "field".
+        Node child = node[__traits(identifier, ret.tupleof[i])];
+
+        // Recursively parse the field, since it could itself be a struct or
+        // other compound type.
+        field = parseYamlNode!(typeof(field))(child);
     }
 
     if (node.length > NUM_FIELDS) {
@@ -36,6 +48,13 @@ T parseYamlNode(T)(Node node)
     }
 
     return ret;
+}
+
+// For any other type, assume it's a primitive and just use node.as to convert
+// to the type being requested.
+T parseYamlNode(T)(Node node) if (!is(T == struct))
+{
+    return node.as!T;
 }
 
 
