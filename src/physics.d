@@ -15,7 +15,7 @@ enum Direction {LEFT, UP, RIGHT, DOWN};
 void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
-    updatePosition(elapsedSeconds);
+    updatePosition(elapsedSeconds, 0);
 }
 
 
@@ -25,57 +25,82 @@ void applyGravity(double elapsedSeconds)
 }
 
 
-void updatePosition(double elapsedSeconds)
+void updatePosition(double elapsedSeconds, size_t recursionDepth)
 {
     // TODO [#3]: Magic numbers bad.
-    double GROUND_HEIGHT = 20.0;
-
-    HitRect   newPlayerRect = player.rect;
-    double    collisionTime;
-    Direction collisionDirection;
+    assert (recursionDepth < 20);
 
     debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
     }
 
+    // TODO [#3]: Magic numbers bad.
+    double GROUND_HEIGHT = 20.0;
+
+    HitRect newPlayerRect = player.rect;
     newPlayerRect.x = player.rect.x + player.vel.x * elapsedSeconds;
     newPlayerRect.y = player.rect.y + player.vel.y * elapsedSeconds;
 
+    bool      collides = false;
+    Platform  firstCollisionPlatform;
+    double    firstCollisionTime = elapsedSeconds;
+    Direction firstCollisionDirection;
+
+    double    collisionTime;
+    Direction collisionDirection;
     foreach (platform; platforms) {
-        // It only counts as a collision if the player is moving into the platform.
         if (entityCollides(player.rect, newPlayerRect, platform.rect,
-                           elapsedSeconds, collisionTime, collisionDirection)) {
-            // Eventually, we'll use these functions to determine the type of the
-            // interaction. But for now, we need to figure out what the types of
-            // interaction are before we try to generalize.
-            platform.interactWithPlayer(platform, player);
-
-            // For now, the only type of platform is the kind that just stops the
-            // player.
-            newPlayerRect.x = player.rect.x + player.vel.x * collisionTime;
-            newPlayerRect.y = player.rect.y + player.vel.y * collisionTime;
-
-            // Set only the component of the player's velocity that moves them into
-            // the platform to zero. Leave the other component unchanged.
-            switch (collisionDirection) {
-                case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
-                case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
-                case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
-                case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
-                default: break;
+                           elapsedSeconds,
+                           collisionTime, collisionDirection)) {
+            collides = true;
+            if (collisionTime < firstCollisionTime) {
+                firstCollisionPlatform = platform;
+                firstCollisionTime = collisionTime;
+                firstCollisionDirection = collisionDirection;
             }
-
-            // TODO [#12]: Simulate gravity (and maybe other things?) for the rest
-            // of the frame.
         }
     }
 
-    if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-        newPlayerRect.bottom = GROUND_HEIGHT;
-        player.vel.y = 0;
+    if (collides) {
+        // TODO [#18]: Make motion nonlinear.
+        // Update the player position
+        newPlayerRect.x = player.rect.x + player.vel.x * firstCollisionTime;
+        newPlayerRect.y = player.rect.y + player.vel.y * firstCollisionTime;
+
+        player.rect = newPlayerRect;
+
+        // TODO [#19]: Make the interaction update the velocity instead.
+        firstCollisionPlatform.interactWithPlayer(firstCollisionPlatform, player);
+
+        // TODO [#19]: Make the interaction update the velocity instead.
+        // Set only the component of the player's velocity that moves them into
+        // the platform to zero. Leave the other component unchanged.
+        switch (firstCollisionDirection) {
+            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
+            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
+            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
+            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
+            default: break;
+        }
+
+        if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+            newPlayerRect.bottom = GROUND_HEIGHT;
+            player.vel.y = 0;
+        }
+
+        // Simulate the rest of the frame.
+        updatePosition(elapsedSeconds - firstCollisionTime,
+                       recursionDepth + 1);
     }
 
-    player.rect = newPlayerRect;
+    else {
+        // TODO [#18]: Make motion nonlinear.
+        // Update the player position
+        newPlayerRect.x = player.rect.x + player.vel.x * firstCollisionTime;
+        newPlayerRect.y = player.rect.y + player.vel.y * firstCollisionTime;
+
+        player.rect = newPlayerRect;
+    }
 }
 
 
