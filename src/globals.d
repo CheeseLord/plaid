@@ -10,6 +10,7 @@ immutable int FRAME_RATE = 20;
 
 immutable double GRAVITY = -50;
 
+int screenMovementRate = 20;
 
 // Game state
 Player player;

@@ -16,6 +16,7 @@ void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
     updatePosition(elapsedSeconds);
+    updateView(elapsedSeconds);
 }
 
 
@@ -23,6 +24,12 @@ void applyGravity(double elapsedSeconds)
 {
     player.vel.y += GRAVITY * elapsedSeconds;
 }
+
+void updateView(double elapsedSeconds)
+{
+    sViewRect.y += cast(int)(screenMovementRate * elapsedSeconds);
+}
+
 
 
 void updatePosition(double elapsedSeconds)
