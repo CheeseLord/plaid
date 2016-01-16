@@ -40,7 +40,6 @@ bool cleanup()
     return success;
 }
 
-// TODO [#3]: Magic numbers bad.
 void initializeMagicNumbers()
 {
     parseMagic();
