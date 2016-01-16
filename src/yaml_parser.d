@@ -5,18 +5,24 @@ import yaml;
 import entity_types;
 import geometry_types;
 import globals;
+import platform_functions;
 
 
-T parseYamlNode(T)(Node node)
+// To parse a struct, the YAML node must be an associative array whose keys
+// have exactly the same names as the fields of the struct.
+T parseYamlNode(T)(Node node) if (is(T == struct))
 {
     enum int NUM_FIELDS = T.tupleof.length;
     T ret;
 
+    // The node must be an associative array (mapping).
     if (!node.isMapping) {
         throw new YamlParseException("Cannot parse node as " ~
             __traits(identifier, T) ~ ": node is not a mapping.");
     }
 
+    // Iterate over all fields of ret. For each one, parse the corresponding
+    // key in the YAML associative array.
     foreach (i, ref field; ret.tupleof) {
         if (!node.containsKey(__traits(identifier, ret.tupleof[i]))) {
             throw new YamlParseException("Cannot parse node as " ~
@@ -24,8 +30,17 @@ T parseYamlNode(T)(Node node)
                 __traits(identifier, ret.tupleof[i]) ~ " field.");
         }
 
-        // FIXME: Recurse.
-        field = node[__traits(identifier, ret.tupleof[i])].as!(typeof(field));
+        // Get the value associated with the key whose name is the same as the
+        // name of this field. For example, if we're parsing ret.x, then we
+        // parse it from node["x"].
+        //
+        // Note: We need to use __traits(identifier, ret.tupleof[i]) rather
+        // than __traits(identifier, field) because the latter is just "field".
+        Node child = node[__traits(identifier, ret.tupleof[i])];
+
+        // Recursively parse the field, since it could itself be a struct or
+        // other compound type.
+        field = parseYamlNode!(typeof(field))(child);
     }
 
     if (node.length > NUM_FIELDS) {
@@ -34,6 +49,64 @@ T parseYamlNode(T)(Node node)
     }
 
     return ret;
+}
+
+T[] parseYamlNode(T: T[])(Node node)
+{
+    // The node must be a list (sequence).
+    if (!node.isSequence) {
+        throw new YamlParseException("Cannot parse node as " ~
+            __traits(identifier, T) ~ "[]: node is not a sequence.");
+    }
+
+    T[] ret;
+
+    foreach (Node child; node) {
+        ret ~= parseYamlNode!T(child);
+    }
+
+    return ret;
+}
+
+// Special case: for the 'interactWithPlayer' field of a Platform, we can't
+// just parse a function from the YAML. So instead, the YAML contains a string,
+// and we check it against a table to figure out which function to use.
+//
+// Note: this will work fine as long as the following statement holds:
+//     A YAML node is parsed as type 'void function(ref Platform, ref Player)'
+//     if and only if it is a Platform's interactWithPlayer function.
+// If we end up needing this solution for two things with the same type, then
+// we'll need to do something else. In that case, I think we can move the check
+// up a level: instead of having a specialization for the function type, we add
+// a special case to the struct parsing code where if we're parsing a Platform
+// and this field is named 'interactWithPlayer', then parse it as a string and
+// do the table lookup.
+T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
+{
+    // The node must be a string.
+    if (!node.isString) {
+        throw new YamlParseException("Cannot parse node as Platform collision "
+            "callback: node is not a string.");
+    }
+
+    immutable T[string] TABLE = [
+        "scream": &scream,
+    ];
+
+    if ((node.as!string) in TABLE) {
+        return TABLE[node.as!string];
+    }
+    else {
+        throw new YamlParseException("Cannot parse node as Platform collision "
+            "callback: no such callback '" ~ node.as!string ~ "'.");
+    }
+}
+
+// For any other type, assume it's a primitive and just use node.as to convert
+// to the type being requested.
+T parseYamlNode(T)(Node node) if (!is(T == struct))
+{
+    return node.as!T;
 }
 
 
@@ -131,7 +204,8 @@ class YamlParseException: Exception {
 }
 
 
-void parseMagic(){
+void parseMagic()
+{
     // Parse the YAML.
     Node configRoot = Loader("config/magic.yaml").load();
     if (!configRoot.isMapping) {
@@ -140,12 +214,21 @@ void parseMagic(){
         return;
     }
 
-    if (!configRoot.containsKey("screen-view")) {
+    parseYamlMemberTo!(sViewRect)(configRoot, "screen-view");
+    parseYamlMemberTo!(wViewRect)(configRoot, "world-view");
+    parseYamlMemberTo!(player)   (configRoot, "player");
+    parseYamlMemberTo!(platforms)(configRoot, "platforms");
+}
+
+// TODO: This could use a better name.
+void parseYamlMemberTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
+{
+    if (!configRoot.containsKey(yamlName)) {
         // TODO [#13]: Error propagation.
-        std.stdio.stderr.writefln(`Error: "screen-view" not present in `
-                                  `YAML file.`);
+        std.stdio.stderr.writefln(`Error: "%s" not present in YAML file.`,
+                                  yamlName);
         return;
     }
-    Node screenViewNode = configRoot["screen-view"];
-    sViewRect = parseYamlNode!ScreenRect(screenViewNode);
+    Node nodeToParse = configRoot[yamlName];
+    parseTo = parseYamlNode!(typeof(parseTo))(nodeToParse);
 }

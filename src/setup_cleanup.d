@@ -44,36 +44,6 @@ bool cleanup()
 void initializeMagicNumbers()
 {
     parseMagic();
-    // Game state
-    player.rect.x = 20;
-    player.rect.y = 65;
-    player.rect.w = 20;
-    player.rect.h = 20;
-    player.vel.x = 30;
-    player.vel.y = 0;
-
-    platforms[0].rect.x = 100;
-    platforms[0].rect.y = 80;
-    platforms[0].rect.w = 50;
-    platforms[0].rect.h = 10;
-    platforms[0].interactWithPlayer = &scream;
-
-    platforms[1].rect.x = 80;
-    platforms[1].rect.y = 100;
-    platforms[1].rect.w = 50;
-    platforms[1].rect.h = 10;
-    platforms[1].interactWithPlayer = &scream;
-
-    // Used for converting between world and screen coordinates.
-    wViewRect.x = 0;
-    wViewRect.y = 0;
-    wViewRect.w = 200;
-    wViewRect.h = 150;
-
-    // This variable is set to true when it's time to end the program -- perhaps
-    // because the user tried to close the window, or they clicked an in-game
-    // "Quit" button.
-    shouldQuit = false;
 }
 
 // Set up everything associated with each library we use.

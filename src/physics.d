@@ -16,12 +16,19 @@ void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
     updatePosition(elapsedSeconds, 0);
+    updateView(elapsedSeconds);
 }
 
 
 void applyGravity(double elapsedSeconds)
 {
     player.vel.y += GRAVITY * elapsedSeconds;
+}
+
+
+void updateView(double elapsedSeconds)
+{
+    sViewRect.y += cast(int)(screenMovementRate * elapsedSeconds);
 }
 
 
@@ -100,6 +107,11 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
         newPlayerRect.y = player.rect.y + player.vel.y * firstCollisionTime;
 
         player.rect = newPlayerRect;
+
+        if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+            newPlayerRect.bottom = GROUND_HEIGHT;
+            player.vel.y = 0;
+        }
     }
 }
 
