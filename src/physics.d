@@ -35,6 +35,8 @@ void updateView(double elapsedSeconds)
 void updatePosition(double elapsedSeconds, size_t recursionDepth)
 {
     // TODO [#3]: Magic numbers bad.
+    // If we hit the maximum recursion depth, something has gone very wrong
+    // elsewhere, and we have some fun debugging to do.
     assert (recursionDepth < 20);
 
     debug (player_pos) {
@@ -44,9 +46,7 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     // TODO [#3]: Magic numbers bad.
     double GROUND_HEIGHT = 20.0;
 
-    HitRect newPlayerRect = player.rect;
-    newPlayerRect.x = player.rect.x + player.vel.x * elapsedSeconds;
-    newPlayerRect.y = player.rect.y + player.vel.y * elapsedSeconds;
+    HitRect endRect = getNewPosition(player.rect, player.vel, elapsedSeconds);
 
     bool      collides = false;
     Platform  firstCollisionPlatform;
@@ -56,7 +56,7 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     double    collisionTime;
     Direction collisionDirection;
     foreach (platform; platforms) {
-        if (entityCollides(player.rect, newPlayerRect, platform.rect,
+        if (entityCollides(player.rect, endRect, platform.rect,
                            elapsedSeconds,
                            collisionTime, collisionDirection)) {
             collides = true;
@@ -69,12 +69,8 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     }
 
     if (collides) {
-        // TODO [#18]: Make motion nonlinear.
-        // Update the player position
-        newPlayerRect.x = player.rect.x + player.vel.x * firstCollisionTime;
-        newPlayerRect.y = player.rect.y + player.vel.y * firstCollisionTime;
-
-        player.rect = newPlayerRect;
+        player.rect = getNewPosition(player.rect, player.vel,
+                                     firstCollisionTime);
 
         // TODO [#19]: Make the interaction update the velocity instead.
         firstCollisionPlatform.interactWithPlayer(firstCollisionPlatform, player);
@@ -90,8 +86,8 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
             default: break;
         }
 
-        if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-            newPlayerRect.bottom = GROUND_HEIGHT;
+        if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+            player.rect.bottom = GROUND_HEIGHT;
             player.vel.y = 0;
         }
 
@@ -101,18 +97,24 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     }
 
     else {
-        // TODO [#18]: Make motion nonlinear.
-        // Update the player position
-        newPlayerRect.x = player.rect.x + player.vel.x * firstCollisionTime;
-        newPlayerRect.y = player.rect.y + player.vel.y * firstCollisionTime;
+        player.rect = getNewPosition(player.rect, player.vel,
+                                     firstCollisionTime);
 
-        player.rect = newPlayerRect;
-
-        if (newPlayerRect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-            newPlayerRect.bottom = GROUND_HEIGHT;
+        if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+            player.rect.bottom = GROUND_HEIGHT;
             player.vel.y = 0;
         }
     }
+}
+
+
+pure HitRect getNewPosition(HitRect rect, Velocity vel, double elapsedSeconds)
+{
+    // TODO [#18]: Make motion nonlinear.
+    double newX = rect.x + elapsedSeconds * vel.x;
+    double newY = rect.y + elapsedSeconds * vel.y;
+
+    return HitRect(newX, newY, rect.w, rect.h);
 }
 
 
