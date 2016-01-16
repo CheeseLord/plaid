@@ -19,7 +19,7 @@ player:
         w: 20
         h: 20
     vel:
-        x: 30
+        x: 0
         y: 0
 
 platforms:
