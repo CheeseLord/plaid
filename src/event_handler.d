@@ -6,6 +6,8 @@ private import globals;
 
 void handleEvents()
 {
+    // Need to go through all the events so that SDL updates its internal
+    // keyboard state array.
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         // Handle the next event here. To get the type of event (keypress,
@@ -21,21 +23,24 @@ void handleEvents()
         if (event.type == SDL_QUIT) {
             shouldQuit = true;
         }
-        else if (event.type == SDL_KEYDOWN) {
-            // TODO [#3]: Magic numbers bad
-            switch (event.key.keysym.sym) {
-                case SDLK_UP:    player.vel.x =   0;
-                                 player.vel.y =  30; break;
-                case SDLK_RIGHT: player.vel.x =  30;
-                                 player.vel.y =   0; break;
-                case SDLK_DOWN:  player.vel.x =   0;
-                                 player.vel.y = -30; break;
-                case SDLK_LEFT:  player.vel.x = -30;
-                                 player.vel.y =   0; break;
-                case SDLK_SPACE: player.vel.y =  30; break;
-                default: // Ignore other keys.
-            }
-        }
+    }
+
+    const(ubyte*) keyState = SDL_GetKeyboardState(null);
+
+    // TODO [#3]: Magic numbers bad
+    if      (keyState[SDL_SCANCODE_LEFT]) {
+        player.vel.x = -30;
+    }
+    else if (keyState[SDL_SCANCODE_RIGHT]) {
+        player.vel.x =  30;
+    }
+    else {
+        player.vel.x =   0;
+    }
+
+    // TODO [#20] Prevent jumping if the player is in mid-air.
+    if (keyState[SDL_SCANCODE_UP]) {
+        player.vel.y = 50;
     }
 }
 
