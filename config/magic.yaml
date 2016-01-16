@@ -22,10 +22,17 @@ player:
         x: 30
         y: 0
 
-platfoms:
+platforms:
     - rect:
         x: 100
         y: 80
         w: 50
         h: 10
+      interactWithPlayer: scream
+    - rect:
+        x: 80
+        y: 100
+        w: 50
+        h: 10
+      interactWithPlayer: scream
 
