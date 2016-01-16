@@ -8,21 +8,19 @@ import globals;
 import platform_functions;
 
 
-// To parse a struct, the YAML node must be an associative array whose keys
-// have exactly the same names as the fields of the struct.
+// Parse a YAML associative array.
 T parseYamlNode(T)(Node node) if (is(T == struct))
 {
     enum int NUM_FIELDS = T.tupleof.length;
     T ret;
 
-    // The node must be an associative array (mapping).
     if (!node.isMapping) {
         throw new YamlParseException("Cannot parse node as " ~
             __traits(identifier, T) ~ ": node is not a mapping.");
     }
 
-    // Iterate over all fields of ret. For each one, parse the corresponding
-    // key in the YAML associative array.
+    // Iterate over all fields of ret. The YAML node's keys should have exactly
+    // the same names as those fields.
     foreach (i, ref field; ret.tupleof) {
         if (!node.containsKey(__traits(identifier, ret.tupleof[i]))) {
             throw new YamlParseException("Cannot parse node as " ~
@@ -38,8 +36,6 @@ T parseYamlNode(T)(Node node) if (is(T == struct))
         // than __traits(identifier, field) because the latter is just "field".
         Node child = node[__traits(identifier, ret.tupleof[i])];
 
-        // Recursively parse the field, since it could itself be a struct or
-        // other compound type.
         field = parseYamlNode!(typeof(field))(child);
     }
 
@@ -51,9 +47,9 @@ T parseYamlNode(T)(Node node) if (is(T == struct))
     return ret;
 }
 
+// Parse a YAML list.
 T[] parseYamlNode(T: T[])(Node node)
 {
-    // The node must be a list (sequence).
     if (!node.isSequence) {
         throw new YamlParseException("Cannot parse node as " ~
             __traits(identifier, T) ~ "[]: node is not a sequence.");
@@ -83,7 +79,6 @@ T[] parseYamlNode(T: T[])(Node node)
 // do the table lookup.
 T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
 {
-    // The node must be a string.
     if (!node.isString) {
         throw new YamlParseException("Cannot parse node as Platform collision "
             "callback: node is not a string.");
@@ -102,101 +97,15 @@ T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
     }
 }
 
-// For any other type, assume it's a primitive and just use node.as to convert
-// to the type being requested.
+// For any other type, assume it's a primitive.
 T parseYamlNode(T)(Node node) if (!is(T == struct))
 {
     return node.as!T;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-version (none) {
-
-Velocity parseVelocity(Node node)
-{
-    if (!node.isMapping) {
-        throw new YamlParseException("Cannot parse node as Velocity: "
-                                     "node is not a mapping.");
-    }
-    if (    !node.containsKey("x") ||   
-            !node.containsKey("y")    ) {
-        throw new YamlParseException("Cannot parse node as Velocity: "
-                                     "node is missing a field.");
-    }
-    if (node.length > 2) {
-        throw new YamlParseException("Cannot parse node as Velocity: "
-                                     "node contains an extra field.");
-    }
-
-    Velocity ret = {
-        x: node["x"].as!double,
-        y: node["y"].as!double,
-    };
-    return ret;
-}
-
-HitRect parseHitRect(Node node)
-{
-    if (!node.isMapping) {
-        throw new YamlParseException("Cannot parse node as HitRect: "
-                                     "node is not a mapping.");
-    }
-    if (    !node.containsKey("x") ||   
-            !node.containsKey("y") ||   
-            !node.containsKey("w") ||   
-            !node.containsKey("h")    ) {
-        throw new YamlParseException("Cannot parse node as HitRect: "
-                                     "node is missing a field.");
-    }
-    if (node.length > 4) {
-        throw new YamlParseException("Cannot parse node as HitRect: "
-                                     "node contains an extra field.");
-    }
-
-    HitRect ret = {
-        x: node["x"].as!double,
-        y: node["y"].as!double,
-        w: node["w"].as!double,
-        h: node["h"].as!double,
-    };
-    return ret;
-}
-
-ScreenRect parseScreenRect(Node node)
-{
-    if (!node.isMapping) {
-        throw new YamlParseException("Cannot parse node as ScreenRect: "
-                                     "node is not a mapping.");
-    }
-    if (    !node.containsKey("x") ||   
-            !node.containsKey("y") ||   
-            !node.containsKey("w") ||   
-            !node.containsKey("h")    ) {
-        throw new YamlParseException("Cannot parse node as ScreenRect: "
-                                     "node is missing a field.");
-    }
-    if (node.length > 4) {
-        throw new YamlParseException("Cannot parse node as ScreenRect: "
-                                     "node contains an extra field.");
-    }
-
-    ScreenRect ret = {
-        x: node["x"].as!int,
-        y: node["y"].as!int,
-        w: node["w"].as!int,
-        h: node["h"].as!int,
-    };
-    return ret;
-}
-
-}
-///////////////////////////////////////////////////////////////////////////////
-
-
-
 class YamlParseException: Exception {
-    // Maybe also take in the problematic node, so we can print it out?
+    // TODO [#13]: Maybe also take in the problematic node, so we can print it
+    // out?
     this(string msg, string file = __FILE__, size_t line = __LINE__,
             Throwable next = null) {
         super(msg, file, line, next);
@@ -206,7 +115,6 @@ class YamlParseException: Exception {
 
 void parseMagic()
 {
-    // Parse the YAML.
     Node configRoot = Loader("config/magic.yaml").load();
     if (!configRoot.isMapping) {
         // TODO [#13]: Error propagation.
@@ -220,7 +128,6 @@ void parseMagic()
     parseYamlMemberTo!(platforms)(configRoot, "platforms");
 }
 
-// TODO: This could use a better name.
 void parseYamlMemberTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
 {
     if (!configRoot.containsKey(yamlName)) {
