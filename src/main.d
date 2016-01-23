@@ -86,6 +86,6 @@ void renderGame(SDL_Surface *surface)
         SDL_FillRect(surface, &sPlatformRect,
                      SDL_MapRGB(surface.format, 127, 0, 0));
     }
-    SDL_BlitSurface(playerSprite, null, surface, &sPlayerRect);
+    SDL_BlitScaled(playerSprite, null, surface, &sPlayerRect);
 }
 
