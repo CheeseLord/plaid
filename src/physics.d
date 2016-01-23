@@ -86,10 +86,10 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
             default: break;
         }
 
-        if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-            player.rect.bottom = GROUND_HEIGHT;
-            player.vel.y = 0;
-        }
+        // if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+        //     player.rect.bottom = GROUND_HEIGHT;
+        //     player.vel.y = 0;
+        // }
 
         // Simulate the rest of the frame.
         updatePosition(elapsedSeconds - firstCollisionTime,
@@ -100,10 +100,10 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
         player.rect = getNewPosition(player.rect, player.vel,
                                      firstCollisionTime);
 
-        if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-            player.rect.bottom = GROUND_HEIGHT;
-            player.vel.y = 0;
-        }
+        // if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
+        //     player.rect.bottom = GROUND_HEIGHT;
+        //     player.vel.y = 0;
+        // }
     }
 }
 
