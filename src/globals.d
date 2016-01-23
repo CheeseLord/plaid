@@ -8,9 +8,11 @@ public import entity_types;
 // Constants
 immutable int FRAME_RATE = 20;
 
-// TODO [#3] These should both be parsed from the YAML.
-double GRAVITY = -100;
-double worldScrollRate = 5;
+double gravity;
+double worldScrollRate;
+
+double playerWalkSpeed;
+double playerJumpStrength;
 
 // Game state
 Player player;

@@ -24,7 +24,7 @@ void updateWorld(double elapsedSeconds)
 
 void applyGravity(double elapsedSeconds)
 {
-    player.vel.y += GRAVITY * elapsedSeconds;
+    player.vel.y += gravity * elapsedSeconds;
 }
 
 
