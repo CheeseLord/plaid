@@ -27,12 +27,11 @@ void handleEvents()
 
     const(ubyte*) keyState = SDL_GetKeyboardState(null);
 
-    // TODO [#3]: Magic numbers bad
     if      (keyState[SDL_SCANCODE_LEFT]) {
-        player.vel.x = -30;
+        player.vel.x = -playerWalkSpeed;
     }
     else if (keyState[SDL_SCANCODE_RIGHT]) {
-        player.vel.x =  30;
+        player.vel.x =  playerWalkSpeed;
     }
     else {
         player.vel.x =   0;
@@ -40,7 +39,7 @@ void handleEvents()
 
     if (playerState == PlayerState.STANDING) {
         if (keyState[SDL_SCANCODE_UP]) {
-            player.vel.y += 110;
+            player.vel.y += playerJumpStrength;
         }
     }
 }

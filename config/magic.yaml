@@ -12,6 +12,11 @@ world-view:
     w: 200
     h: 150
 
+gravity:       -100
+scroll-speed:  5
+walk-speed:    30
+jump-strength: 110
+
 player:
     rect:
         x: 20

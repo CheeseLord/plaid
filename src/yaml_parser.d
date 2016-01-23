@@ -122,13 +122,18 @@ void parseMagic()
         return;
     }
 
-    parseYamlMemberTo!(sViewRect)(configRoot, "screen-view");
-    parseYamlMemberTo!(wViewRect)(configRoot, "world-view");
-    parseYamlMemberTo!(player)   (configRoot, "player");
-    parseYamlMemberTo!(platforms)(configRoot, "platforms");
+    parseYamlTo!(sViewRect)         (configRoot, "screen-view");
+    parseYamlTo!(wViewRect)         (configRoot, "world-view");
+    parseYamlTo!(gravity)           (configRoot, "gravity");
+    parseYamlTo!(playerWalkSpeed)   (configRoot, "walk-speed");
+    parseYamlTo!(playerJumpStrength)(configRoot, "jump-strength");
+
+    parseYamlTo!(worldScrollRate)(configRoot, "scroll-speed");
+    parseYamlTo!(player)         (configRoot, "player");
+    parseYamlTo!(platforms)      (configRoot, "platforms");
 }
 
-void parseYamlMemberTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
+void parseYamlTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
 {
     if (!configRoot.containsKey(yamlName)) {
         // TODO [#13]: Error propagation.

@@ -24,7 +24,7 @@ void updateWorld(double elapsedSeconds)
 
 void applyGravity(double elapsedSeconds)
 {
-    player.vel.y += GRAVITY * elapsedSeconds;
+    player.vel.y += gravity * elapsedSeconds;
 }
 
 
@@ -44,9 +44,6 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
     }
-
-    // TODO [#3]: Magic numbers bad.
-    double GROUND_HEIGHT = 20.0;
 
     HitRect endRect = getNewPosition(player.rect, player.vel, elapsedSeconds);
 
@@ -70,6 +67,8 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
         }
     }
 
+    player.rect = getNewPosition(player.rect, player.vel, firstCollisionTime);
+
     if (collides) {
         // Note: this assumes that once you collide downwardly with a platform,
         // you stop moving. Once we add bouncing, this won't be correct.
@@ -78,11 +77,9 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
             playerState = PlayerState.STANDING;
         }
 
-        player.rect = getNewPosition(player.rect, player.vel,
-                                     firstCollisionTime);
-
         // TODO [#19]: Make the interaction update the velocity instead.
-        firstCollisionPlatform.interactWithPlayer(firstCollisionPlatform, player);
+        firstCollisionPlatform.interactWithPlayer(firstCollisionPlatform,
+                                                  player);
 
         // TODO [#19]: Make the interaction update the velocity instead.
         // Set only the component of the player's velocity that moves them into
@@ -95,24 +92,9 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
             default: break;
         }
 
-        // if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-        //     player.rect.bottom = GROUND_HEIGHT;
-        //     player.vel.y = 0;
-        // }
-
         // Simulate the rest of the frame.
         updatePosition(elapsedSeconds - firstCollisionTime,
                        recursionDepth + 1);
-    }
-
-    else {
-        player.rect = getNewPosition(player.rect, player.vel,
-                                     firstCollisionTime);
-
-        // if (player.rect.bottom < GROUND_HEIGHT && player.vel.y <= 0) {
-        //     player.rect.bottom = GROUND_HEIGHT;
-        //     player.vel.y = 0;
-        // }
     }
 }
 
