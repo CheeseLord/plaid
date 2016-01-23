@@ -38,9 +38,10 @@ void handleEvents()
         player.vel.x =   0;
     }
 
-    // TODO [#20] Prevent jumping if the player is in mid-air.
-    if (keyState[SDL_SCANCODE_UP]) {
-        player.vel.y = 50;
+    if (playerState == PlayerState.STANDING) {
+        if (keyState[SDL_SCANCODE_UP]) {
+            player.vel.y += 110;
+        }
     }
 }
 
