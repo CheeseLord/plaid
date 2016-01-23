@@ -163,8 +163,8 @@ bool cleanupObjects()
 bool loadSprites()
 {
     playerSprite = SDL_LoadBMP("resources/player.bmp");
-    if (playerSprite == null) {
-        printf("Error: SDL_LoadBMP failed.\n");
+    if (playerSprite is null) {
+        printf("Error: SDL_LoadBMP failed.\n%s\n", SDL_GetError());
         return false;
     }
 
