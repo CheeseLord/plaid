@@ -20,3 +20,8 @@ struct Platform {
     void function(ref Platform, ref Player) interactWithPlayer;
 }
 
+enum PlayerState {
+    STANDING,
+    FALLING,
+}
+

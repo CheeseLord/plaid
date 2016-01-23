@@ -15,6 +15,8 @@ enum Direction {LEFT, UP, RIGHT, DOWN};
 void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
+    if (playerState == PlayerState.STANDING)
+        playerState = PlayerState.FALLING;
     updatePosition(elapsedSeconds, 0);
     updateView(elapsedSeconds);
 }
@@ -69,6 +71,13 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
     }
 
     if (collides) {
+        // Note: this assumes that once you collide downwardly with a platform,
+        // you stop moving. Once we add bouncing, this won't be correct.
+        if     (playerState == PlayerState.FALLING &&
+                firstCollisionDirection == Direction.DOWN) {
+            playerState = PlayerState.STANDING;
+        }
+
         player.rect = getNewPosition(player.rect, player.vel,
                                      firstCollisionTime);
 

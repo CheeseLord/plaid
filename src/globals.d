@@ -2,19 +2,20 @@ module globals;
 
 import derelict.sdl2.sdl;
 
-import geometry_types;
-import entity_types;
+public import geometry_types;
+public import entity_types;
 
 // Constants
 immutable int FRAME_RATE = 20;
 
 // TODO [#3] These should both be parsed from the YAML.
-double GRAVITY = -50;
+double GRAVITY = -100;
 double worldScrollRate = 5;
 
 // Game state
 Player player;
 Platform[] platforms;
+PlayerState playerState = PlayerState.FALLING;
 
 // Other globals
 SDL_Window *window;
