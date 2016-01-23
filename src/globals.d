@@ -19,6 +19,7 @@ PlayerState playerState = PlayerState.FALLING;
 
 // Other globals
 SDL_Window *window;
+SDL_Surface *playerSprite;
 
 // This variable is set to true when it's time to end the program -- perhaps
 // because the user tried to close the window, or they clicked an in-game

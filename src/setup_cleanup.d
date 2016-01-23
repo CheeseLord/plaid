@@ -2,6 +2,7 @@ module setup_cleanup;
 
 import std.stdio;
 
+import derelict.sdl2.image;
 import derelict.sdl2.sdl;
 import derelict.util.exception;
 import yaml;
@@ -22,6 +23,8 @@ bool setup()
     success &= setupLibraries();
     success &= setupWindow();
     success &= setupObjects();
+
+    success &= loadSprites();
 
     return success;
 }
@@ -144,14 +147,27 @@ bool cleanupWindow()
 // Set up game objects.
 bool setupObjects()
 {
-    // Nothing to do right now
+    // Nothing to do right now.
     return true;
 }
 
 // Clean up game objects.
 bool cleanupObjects()
 {
-    // Nothing to do right now
+    // Nothing to do right now.
+    return true;
+}
+
+// Load all the sprites.
+// If there are more, we might not want to load them all at the start.
+bool loadSprites()
+{
+    playerSprite = SDL_LoadBMP("resources/player.bmp");
+    if (playerSprite == null) {
+        printf("Error: SDL_LoadBMP failed.\n");
+        return false;
+    }
+
     return true;
 }
 

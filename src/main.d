@@ -3,6 +3,7 @@ import core.time;
 import std.stdio;
 
 import derelict.sdl2.sdl;
+import derelict.sdl2.image;
 
 import eventHandler;
 import geometry;
