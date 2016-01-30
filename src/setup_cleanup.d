@@ -24,8 +24,6 @@ bool setup()
     success &= setupWindow();
     success &= setupObjects();
 
-    success &= loadSprites();
-
     return success;
 }
 
@@ -94,10 +92,26 @@ bool setupSDL()
         return false;
     }
 
+    // Load the SDL2 image library.
+    try {
+        DerelictSDL2Image.load();
+    }
+    catch (Exception e) {
+        stderr.writefln("Error: Failed to load SDL2_Image: %s", e.msg);
+        return false;
+    }
+
     // Initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Error: Failed to initialize SDL: %s\n",
                SDL_GetError());
+        return false;
+    }
+    // Initialize images.
+    // If we want to use other file formats, add them here.
+    int flags = IMG_INIT_PNG;
+    if ((flags & IMG_Init(flags)) != flags) {
+        printf("Error: Failed to initialize SDL_Image\n");
         return false;
     }
 
@@ -107,6 +121,7 @@ bool setupSDL()
 // Clean up everything associated with SDL.
 bool cleanupSDL()
 {
+    IMG_Quit();
     // From http://wiki.libsdl.org/SDL_Quit:
     //     "You should call this function even if you have already shutdown
     //      each initialized subsystem with SDL_QuitSubSystem(). It is safe to
@@ -147,26 +162,22 @@ bool cleanupWindow()
 // Set up game objects.
 bool setupObjects()
 {
-    // Nothing to do right now.
+    // Load sprites.
+    // If there are more, we might not want to load them all at the start.
+    playerSprite = IMG_Load("resources/player.png");
+    if (playerSprite is null) {
+        printf("Error: SDL_LoadBMP failed.\n%s\n", SDL_GetError());
+        return false;
+    }
+
     return true;
 }
 
 // Clean up game objects.
 bool cleanupObjects()
 {
-    // Nothing to do right now.
-    return true;
-}
-
-// Load all the sprites.
-// If there are more, we might not want to load them all at the start.
-bool loadSprites()
-{
-    playerSprite = SDL_LoadBMP("resources/player.bmp");
-    if (playerSprite is null) {
-        printf("Error: SDL_LoadBMP failed.\n%s\n", SDL_GetError());
-        return false;
-    }
+    // Clean up sprites.
+    SDL_FreeSurface(playerSprite);
 
     return true;
 }
