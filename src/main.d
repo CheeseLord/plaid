@@ -9,6 +9,7 @@ import eventHandler;
 import geometry;
 import geometry_types;
 import globals;
+import graphics;
 import physics;
 import setup_cleanup;
 import load_level;
@@ -28,6 +29,7 @@ void main()
 
 void runGame()
 {
+    // TODO [#27]: Call out to a function from graphics.d
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 
@@ -49,6 +51,8 @@ void runGame()
         renderGame(surface);
 
         // Update screen.
+        // TODO [#27]: Create a wrapper function in graphics.d for this.
+        // Or, better, just do it at the end of renderGame.
         SDL_UpdateWindowSurface(window);
 
         // If we haven't used a full frame worth of time, sleep for the rest of
@@ -74,19 +78,5 @@ void updateGame(Duration elapsedTime)
     }
 
     updateWorld(elapsedSeconds);
-}
-
-void renderGame(SDL_Surface *surface)
-{
-    ScreenRect sPlayerRect = worldToScreenRect(player.rect);
-    ScreenRect sPlatformRect;
-
-    SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
-    foreach (platform; platforms) {
-        sPlatformRect = worldToScreenRect(platform.rect);
-        SDL_FillRect(surface, &sPlatformRect,
-                     SDL_MapRGB(surface.format, 127, 0, 0));
-    }
-    SDL_BlitScaled(playerSprite, null, surface, &sPlayerRect);
 }
 
