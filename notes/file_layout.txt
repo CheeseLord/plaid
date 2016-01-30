@@ -1,10 +1,20 @@
 src/
     main (game loop)
     setup_cleanup (initialization and cleanup code)
+    load_level (handle level inialization)
     globals (see name)
     event_handler (see name)
-  
+
     geometry_types (rectangles, points)
     entity_types (structs for storing infomation about game objects)
-  
+
     geometry (spacial mapping)
+
+config/
+    magic.yaml (magic numbers)
+
+resources/
+    levels/
+        test_0.yaml
+    sprites/
+        player.

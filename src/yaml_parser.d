@@ -127,8 +127,18 @@ void parseMagic()
     parseYamlTo!(gravity)           (configRoot, "gravity");
     parseYamlTo!(playerWalkSpeed)   (configRoot, "walk-speed");
     parseYamlTo!(playerJumpStrength)(configRoot, "jump-strength");
-
     parseYamlTo!(worldScrollRate)(configRoot, "scroll-speed");
+}
+
+
+void parseLevel(string levelName)
+{
+    Node configRoot = Loader("resources/levels/" ~ levelName ~ ".yaml").load();
+    if (!configRoot.isMapping) {
+        // TODO [#13]: Error propagation.
+        std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
+        return;
+    }
     parseYamlTo!(player)         (configRoot, "player");
     parseYamlTo!(platforms)      (configRoot, "platforms");
 }

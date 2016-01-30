@@ -10,8 +10,9 @@ import yaml;
 import globals;
 import platform_functions;
 import yaml_parser;
+import load_level;
 
-// Initialize everything. 
+// Initialize everything.
 bool setup()
 {
     debug writefln("Setting up.");
@@ -144,25 +145,11 @@ bool cleanupWindow()
     return true;
 }
 
-// Set up game objects.
-bool setupObjects()
-{
-    // Nothing to do right now.
-    return true;
-}
-
-// Clean up game objects.
-bool cleanupObjects()
-{
-    // Nothing to do right now.
-    return true;
-}
-
 // Load all the sprites.
 // If there are more, we might not want to load them all at the start.
 bool loadSprites()
 {
-    playerSprite = SDL_LoadBMP("resources/player.bmp");
+    playerSprite = SDL_LoadBMP("resources/sprites/player.bmp");
     if (playerSprite is null) {
         printf("Error: SDL_LoadBMP failed.\n%s\n", SDL_GetError());
         return false;
@@ -170,4 +157,3 @@ bool loadSprites()
 
     return true;
 }
-
