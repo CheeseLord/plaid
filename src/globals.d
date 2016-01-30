@@ -22,6 +22,7 @@ Platform[] platforms;
 PlayerState playerState = PlayerState.FALLING;
 
 // Other globals
+// TODO [#27]: Move these to graphics.d
 SDL_Window *window;
 SDL_Surface *playerSprite;
 

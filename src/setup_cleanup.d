@@ -71,6 +71,7 @@ bool cleanupLibraries()
 }
 
 // Set up everything associated with SDL.
+// TODO [#27]: Maybe move to graphics.d?
 bool setupSDL()
 {
     // Load the SDL shared library.
@@ -138,6 +139,7 @@ bool cleanupSDL()
 }
 
 // Set up the game window.
+// TODO [#27]: Move to graphics.d
 bool setupWindow()
 {
     // Make sure the user can't create a zero-sized window by messing with the
@@ -160,6 +162,7 @@ bool setupWindow()
 }
 
 // Clean up the game window.
+// TODO [#27]: Move to graphics.d
 bool cleanupWindow()
 {
     if (window !is null) {
@@ -171,6 +174,7 @@ bool cleanupWindow()
 
 // Load all the sprites.
 // If there are more, we might not want to load them all at the start.
+// TODO [#27]: Move to graphics.d
 bool loadSprites()
 {
     playerSprite = IMG_Load("resources/sprites/player.png");
