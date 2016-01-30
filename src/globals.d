@@ -7,6 +7,8 @@ public import entity_types;
 
 // Constants
 immutable int FRAME_RATE = 20;
+immutable int MIN_SCREEN_WIDTH  = 80;
+immutable int MIN_SCREEN_HEIGHT = 60;
 
 double gravity;
 double worldScrollRate;

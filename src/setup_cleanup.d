@@ -1,6 +1,7 @@
 module setup_cleanup;
 
 import std.stdio;
+import std.algorithm: max;
 
 import derelict.sdl2.image;
 import derelict.sdl2.sdl;
@@ -10,8 +11,9 @@ import yaml;
 import globals;
 import platform_functions;
 import yaml_parser;
+import load_level;
 
-// Initialize everything. 
+// Initialize everything.
 bool setup()
 {
     debug writefln("Setting up.");
@@ -23,6 +25,8 @@ bool setup()
     success &= setupLibraries();
     success &= setupWindow();
     success &= setupObjects();
+
+    success &= loadSprites();
 
     return success;
 }
@@ -107,6 +111,7 @@ bool setupSDL()
                SDL_GetError());
         return false;
     }
+
     // Initialize images.
     // If we want to use other file formats, add them here.
     int flags = IMG_INIT_PNG;
@@ -135,14 +140,19 @@ bool cleanupSDL()
 // Set up the game window.
 bool setupWindow()
 {
+    // Make sure the user can't create a zero-sized window by messing with the
+    // config files.
+    sViewRect.w = max(sViewRect.w, MIN_SCREEN_WIDTH);
+    sViewRect.h = max(sViewRect.h, MIN_SCREEN_HEIGHT);
+
     // Create a window.
-    // TODO [#3]: Magic numbers bad.
     window = SDL_CreateWindow("Plaid",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        640, 480, SDL_WINDOW_OPENGL);
+        sViewRect.w, sViewRect.h, SDL_WINDOW_OPENGL);
 
     if (window is null) {
-        writefln("Error: Failed to create window for plaid.");
+        printf("Error: Failed to create window for plaid: %s\n",
+               SDL_GetError());
         return false;
     }
 
@@ -159,26 +169,17 @@ bool cleanupWindow()
     return true;
 }
 
-// Set up game objects.
-bool setupObjects()
+// Load all the sprites.
+// If there are more, we might not want to load them all at the start.
+bool loadSprites()
 {
-    // Load sprites.
-    // If there are more, we might not want to load them all at the start.
-    playerSprite = IMG_Load("resources/player.png");
+    playerSprite = IMG_Load("resources/sprites/player.png");
     if (playerSprite is null) {
-        printf("Error: SDL_LoadBMP failed.\n%s\n", SDL_GetError());
+        printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
         return false;
     }
 
     return true;
 }
 
-// Clean up game objects.
-bool cleanupObjects()
-{
-    // Clean up sprites.
-    SDL_FreeSurface(playerSprite);
-
-    return true;
-}
 

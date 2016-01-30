@@ -11,6 +11,7 @@ import geometry_types;
 import globals;
 import physics;
 import setup_cleanup;
+import load_level;
 
 void main()
 {
