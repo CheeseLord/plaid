@@ -1,6 +1,7 @@
 module setup_cleanup;
 
 import std.stdio;
+import std.algorithm: max;
 
 import derelict.sdl2.image;
 import derelict.sdl2.sdl;
@@ -120,14 +121,19 @@ bool cleanupSDL()
 // Set up the game window.
 bool setupWindow()
 {
+    // Make sure the user can't create a zero-sized window by messing with the
+    // config files.
+    sViewRect.w = max(sViewRect.w, MIN_SCREEN_WIDTH);
+    sViewRect.h = max(sViewRect.h, MIN_SCREEN_HEIGHT);
+
     // Create a window.
-    // TODO [#3]: Magic numbers bad.
     window = SDL_CreateWindow("Plaid",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        640, 480, SDL_WINDOW_OPENGL);
+        sViewRect.w, sViewRect.h, SDL_WINDOW_OPENGL);
 
     if (window is null) {
-        writefln("Error: Failed to create window for plaid.");
+        printf("Error: Failed to create window for plaid: %s\n",
+               SDL_GetError());
         return false;
     }
 
