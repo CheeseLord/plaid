@@ -1,4 +1,9 @@
 ---
+world-view:
+    x: 0
+    y: 0
+    w: 200
+    h: 150
 
 player:
     rect:

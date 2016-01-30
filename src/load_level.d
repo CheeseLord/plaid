@@ -13,9 +13,14 @@ import yaml_parser;
 // Set up game objects.
 bool setupObjects()
 {
-    // Nothing to do right now.
-    initializeLevel("test_0");
+    currentLevel = "test_0";
+    initializeLevel(currentLevel);
     return true;
+}
+
+void reloadLevel(string levelName)
+{
+    initializeLevel(levelName);
 }
 
 // Clean up game objects.

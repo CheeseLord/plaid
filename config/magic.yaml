@@ -6,12 +6,6 @@ screen-view:
     w: 640
     h: 480
 
-world-view:
-    x: 0
-    y: 0
-    w: 200
-    h: 150
-
 gravity:       -100
 scroll-speed:  5
 walk-speed:    30

@@ -16,10 +16,12 @@ double worldScrollRate;
 double playerWalkSpeed;
 double playerJumpStrength;
 
+
 // Game state
 Player player;
 Platform[] platforms;
 PlayerState playerState = PlayerState.FALLING;
+string currentLevel;
 
 // Other globals
 // TODO [#27]: Move these to graphics.d

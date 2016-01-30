@@ -1,8 +1,11 @@
 module eventHandler;
+import std.stdio;
 
 private import derelict.sdl2.sdl;
 
 private import globals;
+
+private import load_level;
 
 void handleEvents()
 {
@@ -27,16 +30,19 @@ void handleEvents()
 
     const(ubyte*) keyState = SDL_GetKeyboardState(null);
 
-    if      (keyState[SDL_SCANCODE_LEFT]) {
+    if (keyState[SDL_SCANCODE_R]) {
+        reloadLevel(currentLevel);
+    }
+
+    if      (keyState[SDL_SCANCODE_LEFT] && ! keyState[SDL_SCANCODE_RIGHT]) {
         player.vel.x = -playerWalkSpeed;
     }
-    else if (keyState[SDL_SCANCODE_RIGHT]) {
+    else if (keyState[SDL_SCANCODE_RIGHT] && ! keyState[SDL_SCANCODE_LEFT]) {
         player.vel.x =  playerWalkSpeed;
     }
     else {
         player.vel.x =   0;
     }
-
     if (playerState == PlayerState.STANDING) {
         if (keyState[SDL_SCANCODE_UP]) {
             player.vel.y += playerJumpStrength;
