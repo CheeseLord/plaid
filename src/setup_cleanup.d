@@ -14,21 +14,26 @@ import yaml_parser;
 import load_level;
 
 // Initialize everything.
-bool setup()
+// Returns:
+//      1 -- success
+//      0 -- failure
+//     -1 -- complete failure; abort without cleanup
+// TODO [#3]: Magic(?) numbers bad.
+int setup()
 {
     debug writefln("Setting up.");
 
+    if (!setupLibraries()) {
+        return -1;
+    }
+
     initializeMagicNumbers();
 
-    bool success = true;
+    bool success = setupWindow()    &&
+                   setupObjects()   &&
+                   loadSprites();
 
-    success &= setupLibraries();
-    success &= setupWindow();
-    success &= setupObjects();
-
-    success &= loadSprites();
-
-    return success;
+    return success ? 1 : 0;
 }
 
 // Clean up everything that was initialized.
@@ -36,13 +41,9 @@ bool cleanup()
 {
     debug writefln("Cleaning up.");
 
-    bool success = true;
-
-    success &= cleanupObjects();
-    success &= cleanupWindow();
-    success &= cleanupLibraries();
-
-    return success;
+    return cleanupObjects()   &&
+           cleanupWindow()    &&
+           cleanupLibraries();
 }
 
 void initializeMagicNumbers()
