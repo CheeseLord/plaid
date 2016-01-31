@@ -27,6 +27,7 @@ string currentLevel;
 // TODO [#27]: Move these to graphics.d
 SDL_Window *window;
 SDL_Surface *playerSprite;
+SDL_Surface *unscaledPlayerSprite;
 
 // This variable is set to true when it's time to end the program -- perhaps
 // because the user tried to close the window, or they clicked an in-game
