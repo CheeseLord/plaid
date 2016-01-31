@@ -8,6 +8,7 @@ import derelict.sdl2.sdl;
 import derelict.util.exception;
 import yaml;
 
+import geometry;
 import globals;
 import platform_functions;
 import yaml_parser;
@@ -178,13 +179,52 @@ bool cleanupWindow()
 // TODO [#27]: Move to graphics.d
 bool loadSprites()
 {
-    playerSprite = IMG_Load("resources/sprites/player.png");
-    if (playerSprite is null) {
+    // TODO [#28]: Do we ever free this? Should we?
+    unscaledPlayerSprite = IMG_Load("resources/sprites/player.png");
+    if (unscaledPlayerSprite is null) {
         printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
         return false;
     }
 
+    // When the unscaledPlayerSprite is blitted onto another surface, replace
+    // the alpha values of the affected pixels. This is necessary because we're
+    // copying it onto an intermediate surface (playerSprite) before we
+    // actually blit it onto the screen.
+    SDL_SetSurfaceBlendMode(unscaledPlayerSprite, SDL_BLENDMODE_NONE);
+
+    // Note: we'll eventually need to move this somewhere else, so it can be
+    // called when the window is resized.
+    // Note: Calling SDL_ConvertSurface might make it faster to repeatedly blit
+    // playerSprite onto the screen.
+    ScreenRect sPlayerRect = worldToScreenRect(player.rect);
+    sPlayerRect.x = 0;
+    sPlayerRect.y = 0;
+    // TODO [#28]: We don't free this.
+    playerSprite = createSimilarSurface(unscaledPlayerSprite,
+                                        sPlayerRect.w, sPlayerRect.h);
+    if (playerSprite is null) {
+        printf("Error: Failed to create player surface: %s\n", SDL_GetError());
+        return false;
+    }
+    SDL_BlitScaled(unscaledPlayerSprite, null, playerSprite, &sPlayerRect);
+
     return true;
 }
 
+// Create a surface similar to similarTo, but with different dimensions.
+// TODO [#27]: Move to graphics.d
+private SDL_Surface* createSimilarSurface(SDL_Surface* similarTo,
+                                          int width, int height)
+{
+    return SDL_CreateRGBSurface(
+        0,  // http://wiki.libsdl.org/SDL_CreateRGBSurface --
+            // "the flags are unused and should be set to 0"
+        width,
+        height,
+        similarTo.format.BitsPerPixel,
+        similarTo.format.Rmask,
+        similarTo.format.Gmask,
+        similarTo.format.Bmask,
+        similarTo.format.Amask);
+}
 
