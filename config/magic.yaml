@@ -7,6 +7,6 @@ screen-view:
     h: 480
 
 gravity:       -100
-scroll-speed:  5
 walk-speed:    30
 jump-strength: 110
+

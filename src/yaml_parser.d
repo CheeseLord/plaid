@@ -126,7 +126,6 @@ void parseMagic()
     parseYamlTo!(gravity)           (configRoot, "gravity");
     parseYamlTo!(playerWalkSpeed)   (configRoot, "walk-speed");
     parseYamlTo!(playerJumpStrength)(configRoot, "jump-strength");
-    parseYamlTo!(worldScrollRate)(configRoot, "scroll-speed");
 }
 
 
@@ -138,9 +137,10 @@ void parseLevel(string levelName)
         std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
         return;
     }
-    parseYamlTo!(wViewRect)         (configRoot, "world-view");
+    parseYamlTo!(wViewRect)      (configRoot, "world-view");
     parseYamlTo!(player)         (configRoot, "player");
     parseYamlTo!(platforms)      (configRoot, "platforms");
+    parseYamlTo!(worldScrollRate)(configRoot, "scroll-speed");
 }
 
 void parseYamlTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
