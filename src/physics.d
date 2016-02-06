@@ -7,34 +7,34 @@ private import std.algorithm;
 private import entity_types;
 private import geometry;
 private import globals;
+private import observer;
 
 
 enum Direction {LEFT, UP, RIGHT, DOWN};
 
 
-void updateWorld(double elapsedSeconds)
+public void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
-    if (playerState == PlayerState.STANDING)
+    if (playerState == PlayerState.STANDING) {
         playerState = PlayerState.FALLING;
+    }
     updatePosition(elapsedSeconds, 0);
     updateView(elapsedSeconds);
+    // TODO [#31]: Factor this out.
+    if (player.rect.top < wViewRect.bottom) {
+        observers.notify(NotifyType.LOSE_LEVEL);
+    }
 }
 
 
-void applyGravity(double elapsedSeconds)
+private void applyGravity(double elapsedSeconds)
 {
     player.vel.y += gravity * elapsedSeconds;
 }
 
 
-void updateView(double elapsedSeconds)
-{
-    wViewRect.y += (worldScrollRate * elapsedSeconds);
-}
-
-
-void updatePosition(double elapsedSeconds, size_t recursionDepth)
+private void updatePosition(double elapsedSeconds, size_t recursionDepth)
 {
     // TODO [#3]: Magic numbers bad.
     // If we hit the maximum recursion depth, something has gone very wrong
@@ -99,7 +99,14 @@ void updatePosition(double elapsedSeconds, size_t recursionDepth)
 }
 
 
-pure HitRect getNewPosition(HitRect rect, Velocity vel, double elapsedSeconds)
+private void updateView(double elapsedSeconds)
+{
+    wViewRect.y += (worldScrollRate * elapsedSeconds);
+}
+
+
+pure private HitRect getNewPosition(HitRect rect, Velocity vel,
+                                    double elapsedSeconds)
 {
     // TODO [#18]: Make motion nonlinear.
     double newX = rect.x + elapsedSeconds * vel.x;

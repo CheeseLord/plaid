@@ -1,16 +1,20 @@
 module observer;
 
+private import std.stdio;
+
 private import globals;
 
-
-alias Observer = void delegate(NotifyType);
 
 enum NotifyType {
     WIN_LEVEL, LOSE_LEVEL,
 };
 
-class ObserverList {
-    Observer[] observers_ = [];
+
+alias Observer = void delegate(NotifyType);
+
+
+public class ObserverList {
+    private Observer[] observers_ = [];
 
     void addObserver(Observer observer)
     {
@@ -23,8 +27,9 @@ class ObserverList {
     }
 }
 
-void initializeObservers()
+public void initializeObservers()
 {
     observers = new ObserverList();
+
 }
 
