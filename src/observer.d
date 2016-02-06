@@ -23,8 +23,10 @@ class ObserverList {
     }
 }
 
-void initializeObservers()
+bool initializeObservers()
 {
     observers = new ObserverList();
+
+    return true;
 }
 

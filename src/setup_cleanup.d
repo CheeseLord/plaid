@@ -15,29 +15,39 @@ private import platform_functions;
 private import yaml_parser;
 private import load_level;
 
-// Initialize everything.
-// Returns:
-//      1 -- success
-//      0 -- failure
-//     -1 -- complete failure; abort without cleanup
-// TODO [#3]: Magic(?) numbers bad.
-// TODO [#30]: This is a hacky way to do this, and probably isn't quite right.
-int setup()
+private enum InitIndex: int {
+    NOTHING_INITIALIZED = 0,
+    LIBRARIES,
+    MAGIC_NUMBERS,
+    OBSERVERS,
+    OBJECTS,
+    GRAPHICS,
+}
+
+private InitIndex setupProgress;
+
+// Initialize everything. Return true on success, false otherwise.
+bool setup()
 {
     debug writefln("Setting up.");
 
-    if (!setupLibraries()) {
-        return -1;
+    setupProgress = InitIndex.NOTHING_INITIALIZED;
+
+    // Note: the order of initialization here must match the enum InitIndex,
+    // defined above.
+    // Note: we need to use ++setupProgress instead of setupProgress++ so that
+    // the first one (which increments from 0 to 1) returns a nonzero value.
+    if     ((setupLibraries()         && ++setupProgress) &&
+            (initializeMagicNumbers() && ++setupProgress) &&
+            (initializeObservers()    && ++setupProgress) &&
+            (setupObjects()           && ++setupProgress) &&
+            (setupGraphics()          && ++setupProgress)) {
+        return true;
     }
-
-    initializeMagicNumbers();
-
-    initializeObservers();
-
-    bool success = setupObjects()   &&
-                   setupGraphics();
-
-    return success ? 1 : 0;
+    else {
+        cleanup();
+        return false;
+    }
 }
 
 // Clean up everything that was initialized.
@@ -45,14 +55,41 @@ bool cleanup()
 {
     debug writefln("Cleaning up.");
 
-    return cleanupObjects()   &&
-           cleanupGraphics()  &&
-           cleanupLibraries();
+    switch (setupProgress) {
+        case InitIndex.GRAPHICS:
+            if (!cleanupGraphics()) {
+                return false;
+            }
+            goto case;
+        case InitIndex.OBJECTS:
+            if (!cleanupObjects()) {
+                return false;
+            }
+            goto case;
+        case InitIndex.OBSERVERS:
+            // No cleanupObservers() function.
+            goto case;
+        case InitIndex.MAGIC_NUMBERS:
+            // No cleanupMagicNumbers() function.
+            goto case;
+        case InitIndex.LIBRARIES:
+            if (!cleanupLibraries()) {
+                return false;
+            }
+            goto case;
+        case InitIndex.NOTHING_INITIALIZED:
+            return true;
+        default:
+            assert(false);
+    }
 }
 
-void initializeMagicNumbers()
+bool initializeMagicNumbers()
 {
     parseMagic();
+
+    // TODO [#13]: If an exception is thrown, return false.
+    return true;
 }
 
 // Set up everything associated with each library we use.
