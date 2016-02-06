@@ -1,18 +1,19 @@
 module setup_cleanup;
 
-import std.stdio;
+private import std.stdio;
 
-import derelict.sdl2.image;
-import derelict.sdl2.sdl;
-import derelict.util.exception;
-import yaml;
+private import derelict.sdl2.image;
+private import derelict.sdl2.sdl;
+private import derelict.util.exception;
+private import yaml;
 
-import geometry;
-import globals;
-import graphics;
-import platform_functions;
-import yaml_parser;
-import load_level;
+private import geometry;
+private import globals;
+private import graphics;
+private import observer;
+private import platform_functions;
+private import yaml_parser;
+private import load_level;
 
 // Initialize everything.
 // Returns:
@@ -30,6 +31,8 @@ int setup()
     }
 
     initializeMagicNumbers();
+
+    initializeObservers();
 
     bool success = setupObjects()   &&
                    setupGraphics();

@@ -1,6 +1,8 @@
 module globals;
 
-import derelict.sdl2.sdl;
+private import derelict.sdl2.sdl;
+
+private import observer;
 
 public import geometry_types;
 public import entity_types;
@@ -16,12 +18,13 @@ double worldScrollRate;
 double playerWalkSpeed;
 double playerJumpStrength;
 
-
 // Game state
 Player player;
 Platform[] platforms;
 PlayerState playerState = PlayerState.FALLING;
 string currentLevel;
+
+ObserverList observers;
 
 // This variable is set to true when it's time to end the program -- perhaps
 // because the user tried to close the window, or they clicked an in-game
