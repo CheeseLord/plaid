@@ -33,31 +33,18 @@ void main()
 
 void runGame()
 {
-    // TODO [#27]: Call out to a function from graphics.d
-    SDL_Surface *surface = SDL_GetWindowSurface(window);
-    SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
-
-    Duration frameLength = dur!"seconds"(1) / FRAME_RATE;
-
+    Duration frameLength   = dur!"seconds"(1) / FRAME_RATE;
     MonoTime prevStartTime = MonoTime.currTime;
+
+    clearScreen();
 
     while (!shouldQuit) {
         // Get start time of this iteration.
         MonoTime currStartTime = MonoTime.currTime;
 
-        // Quit when someone tries to close the window:
         handleEvents();
-
-        // Simulate game forward.
         updateGame(currStartTime - prevStartTime);
-
-        // Draw game state.
-        renderGame(surface);
-
-        // Update screen.
-        // TODO [#27]: Create a wrapper function in graphics.d for this.
-        // Or, better, just do it at the end of renderGame.
-        SDL_UpdateWindowSurface(window);
+        renderGame();
 
         // If we haven't used a full frame worth of time, sleep for the rest of
         // the frame.
