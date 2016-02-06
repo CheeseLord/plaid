@@ -27,9 +27,10 @@ public class ObserverList {
     }
 }
 
-public void initializeObservers()
+bool initializeObservers()
 {
     observers = new ObserverList();
 
+    return true;
 }
 

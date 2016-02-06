@@ -19,15 +19,12 @@ void main()
     // Old GTK test. Not used, for now at least.
     // testWindow();
 
-    int setupStatus = setup();
-    scope(exit) {
-        if (setupStatus >= 0) {
-            cleanup();
-        }
-    }
-
-    if (setupStatus > 0) {
+    if (setup()) {
         runGame();
+        cleanup();
+    }
+    else {
+        debug writefln("Setup failed; aborting.");
     }
 }
 
