@@ -3,6 +3,7 @@ module observer;
 private import std.stdio;
 
 private import globals;
+private import win_lose;
 
 
 enum NotifyType {
@@ -27,9 +28,13 @@ public class ObserverList {
     }
 }
 
+
 bool initializeObservers()
 {
     observers = new ObserverList();
+
+    // TODO [#33]: Move this somewhere more sensible.
+    win_lose.registerObservers();
 
     return true;
 }

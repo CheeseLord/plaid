@@ -20,10 +20,14 @@ public void updateWorld(double elapsedSeconds)
         playerState = PlayerState.FALLING;
     }
     updatePosition(elapsedSeconds, 0);
-    updateView(elapsedSeconds);
     // TODO [#31]: Factor this out.
+    updateView(elapsedSeconds);
+    // TODO [#33]: Win and lose conditions should happen elsewhere.
     if (player.rect.top < wViewRect.bottom) {
         observers.notify(NotifyType.LOSE_LEVEL);
+    }
+    if (player.rect.bottom > 250) {
+        observers.notify(NotifyType.WIN_LEVEL);
     }
 }
 
