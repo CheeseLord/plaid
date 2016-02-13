@@ -1,6 +1,7 @@
 module setup_cleanup;
 
 private import std.stdio;
+private import std.string: format;
 
 private import derelict.sdl2.image;
 private import derelict.sdl2.sdl;
@@ -20,9 +21,9 @@ private enum InitIndex: int {
     NOTHING_INITIALIZED = 0,
     LIBRARIES,
     MAGIC_NUMBERS,
-    OBSERVERS,
     OBJECTS,
     GRAPHICS,
+    OBSERVERS,
 }
 
 private InitIndex setupProgress;
@@ -36,13 +37,11 @@ bool setup()
 
     // Note: the order of initialization here must match the enum InitIndex,
     // defined above.
-    // Note: we need to use ++setupProgress instead of setupProgress++ so that
-    // the first one (which increments from 0 to 1) returns a nonzero value.
-    if     ((setupLibraries()         && ++setupProgress) &&
-            (initializeMagicNumbers() && ++setupProgress) &&
-            (initializeObservers()    && ++setupProgress) &&
-            (setupObjects()           && ++setupProgress) &&
-            (setupGraphics()          && ++setupProgress)) {
+    if     ((setupLibraries() && incProgressTo(InitIndex.LIBRARIES    )) &&
+            (setupMagic()     && incProgressTo(InitIndex.MAGIC_NUMBERS)) &&
+            (setupObjects()   && incProgressTo(InitIndex.OBJECTS      )) &&
+            (setupGraphics()  && incProgressTo(InitIndex.GRAPHICS     )) &&
+            (setupObservers() && incProgressTo(InitIndex.OBSERVERS    ))) {
         return true;
     }
     else {
@@ -51,29 +50,45 @@ bool setup()
     }
 }
 
+// Increment setupProgress, and check that it reaches the stage we expect.
+private bool incProgressTo(InitIndex newProgress)
+{
+    setupProgress++;
+    assert (setupProgress == newProgress,
+            format("Setup stages are out of order: enum says stage %s should "
+                   "be %s, but we did %s instead.", cast(int)(setupProgress),
+                   setupProgress, newProgress));
+    return (setupProgress == newProgress);
+}
+
 // Clean up everything that was initialized.
 bool cleanup()
 {
     debug writefln("Cleaning up.");
 
     switch (setupProgress) {
+        case InitIndex.OBSERVERS:
+            decProgressFrom(InitIndex.OBSERVERS);
+            // No cleanupObservers() function.
+            goto case;
         case InitIndex.GRAPHICS:
+            decProgressFrom(InitIndex.GRAPHICS);
             if (!cleanupGraphics()) {
                 return false;
             }
             goto case;
         case InitIndex.OBJECTS:
+            decProgressFrom(InitIndex.OBJECTS);
             if (!cleanupObjects()) {
                 return false;
             }
             goto case;
-        case InitIndex.OBSERVERS:
-            // No cleanupObservers() function.
-            goto case;
         case InitIndex.MAGIC_NUMBERS:
+            decProgressFrom(InitIndex.MAGIC_NUMBERS);
             // No cleanupMagicNumbers() function.
             goto case;
         case InitIndex.LIBRARIES:
+            decProgressFrom(InitIndex.LIBRARIES);
             if (!cleanupLibraries()) {
                 return false;
             }
@@ -85,7 +100,14 @@ bool cleanup()
     }
 }
 
-bool initializeMagicNumbers()
+// Decrement setupProgress, and check that it was at the stage we expect.
+private void decProgressFrom(InitIndex oldProgress)
+{
+    assert (setupProgress == oldProgress, "Cleanup stages are out of order.");
+    setupProgress--;
+}
+
+bool setupMagic()
 {
     parseMagic();
 
@@ -181,7 +203,7 @@ bool cleanupSDL()
 }
 
 
-bool initializeObservers()
+bool setupObservers()
 {
     observers = new ObserverList();
 
