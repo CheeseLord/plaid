@@ -24,6 +24,7 @@ private enum InitIndex: int {
     OBJECTS,
     GRAPHICS,
     OBSERVERS,
+    EVERYTHING_INITIALIZED,
 }
 
 private InitIndex setupProgress;
@@ -42,12 +43,14 @@ bool setup()
             (setupObjects()   && incProgressTo(InitIndex.OBJECTS      )) &&
             (setupGraphics()  && incProgressTo(InitIndex.GRAPHICS     )) &&
             (setupObservers() && incProgressTo(InitIndex.OBSERVERS    ))) {
-        return true;
+        // Make sure we didn't miss a stage.
+        if (incProgressTo(InitIndex.EVERYTHING_INITIALIZED)) {
+            return true;
+        }
     }
-    else {
-        cleanup();
-        return false;
-    }
+
+    cleanup();
+    return false;
 }
 
 // Increment setupProgress, and check that it reaches the stage we expect.
@@ -58,6 +61,11 @@ private bool incProgressTo(InitIndex newProgress)
             format("Setup stages are out of order: enum says stage %s should "
                    "be %s, but we did %s instead.", cast(int)(setupProgress),
                    setupProgress, newProgress));
+
+    debug (SetupCleanup) {
+        writefln("Setup progress: %s", setupProgress);
+    }
+
     return (setupProgress == newProgress);
 }
 
@@ -66,45 +74,51 @@ bool cleanup()
 {
     debug writefln("Cleaning up.");
 
-    switch (setupProgress) {
-        case InitIndex.OBSERVERS:
-            decProgressFrom(InitIndex.OBSERVERS);
-            // No cleanupObservers() function.
-            goto case;
-        case InitIndex.GRAPHICS:
-            decProgressFrom(InitIndex.GRAPHICS);
-            if (!cleanupGraphics()) {
-                return false;
-            }
-            goto case;
-        case InitIndex.OBJECTS:
-            decProgressFrom(InitIndex.OBJECTS);
-            if (!cleanupObjects()) {
-                return false;
-            }
-            goto case;
-        case InitIndex.MAGIC_NUMBERS:
-            decProgressFrom(InitIndex.MAGIC_NUMBERS);
-            // No cleanupMagicNumbers() function.
-            goto case;
-        case InitIndex.LIBRARIES:
-            decProgressFrom(InitIndex.LIBRARIES);
-            if (!cleanupLibraries()) {
-                return false;
-            }
-            goto case;
-        case InitIndex.NOTHING_INITIALIZED:
-            return true;
-        default:
-            assert(false);
+    // Stores the InitIndex of the next thing to be cleaned up.
+    InitIndex cleanupProgress = InitIndex.EVERYTHING_INITIALIZED;
+
+    if (decProgressTo(cleanupProgress, InitIndex.OBSERVERS)) {
+        // No cleanupObservers() function.
     }
+
+    if (decProgressTo(cleanupProgress, InitIndex.GRAPHICS)) {
+        if (!cleanupGraphics()) return false;
+    }
+
+    if (decProgressTo(cleanupProgress, InitIndex.OBJECTS)) {
+        if (!cleanupObjects()) return false;
+    }
+
+    if (decProgressTo(cleanupProgress, InitIndex.MAGIC_NUMBERS)) {
+        // No cleanupMagicNumbers() function.
+    }
+
+    if (decProgressTo(cleanupProgress, InitIndex.LIBRARIES)) {
+        if (!cleanupLibraries()) return false;
+    }
+
+    decProgressTo(cleanupProgress, InitIndex.NOTHING_INITIALIZED);
+
+    return true;
 }
 
 // Decrement setupProgress, and check that it was at the stage we expect.
-private void decProgressFrom(InitIndex oldProgress)
+private bool decProgressTo(ref InitIndex progress, InitIndex newProgress)
 {
-    assert (setupProgress == oldProgress, "Cleanup stages are out of order.");
-    setupProgress--;
+    progress--;
+    assert (progress == newProgress,
+            format("Cleanup stages are out of order: enum says stage %s "
+                   "should be %s, but we did %s instead.",
+                   cast(int)(progress), progress, newProgress));
+
+    debug (SetupCleanup) {
+        if (setupProgress >= progress)
+            writefln("Cleanup progress: %s", progress);
+        else
+            writefln("Cleanup: skipping %s", progress);
+    }
+
+    return (setupProgress >= progress);
 }
 
 bool setupMagic()
