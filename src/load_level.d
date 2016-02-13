@@ -13,7 +13,7 @@ import yaml_parser;
 // Set up game objects.
 bool setupObjects()
 {
-    currentLevel = "test_1";
+    currentLevel = "level0";
     initializeLevel(currentLevel);
     return true;
 }
