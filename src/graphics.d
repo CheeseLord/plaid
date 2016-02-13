@@ -14,6 +14,7 @@ import globals;
 private SDL_Window  *window;
 private SDL_Surface *playerSprite;
 private SDL_Surface *unscaledPlayerSprite;
+private SDL_Surface *platformSprite;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,13 @@ private bool loadSprites()
     }
     SDL_BlitScaled(unscaledPlayerSprite, null, playerSprite, &sPlayerRect);
 
+    // TODO [#28]: We never free this. Should we?
+    platformSprite = IMG_Load("resources/sprites/platform.png");
+    if (platformSprite is null) {
+        printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
+        return false;
+    }
+
     return true;
 }
 
@@ -118,8 +126,7 @@ void renderGame()
     clearScreen();
     foreach (platform; platforms) {
         sPlatformRect = worldToScreenRect(platform.rect);
-        SDL_FillRect(surface, &sPlatformRect,
-                     SDL_MapRGB(surface.format, 127, 0, 0));
+        drawPlatform(surface, sPlatformRect);
     }
     SDL_BlitSurface(playerSprite, null, surface, &sPlayerRect);
 
@@ -130,4 +137,30 @@ void clearScreen()
 {
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
+}
+
+void drawPlatform(SDL_Surface *surface, const(ScreenRect) wholeRect)
+{
+    int minX = wholeRect.x;
+    int minY = wholeRect.y;
+    int maxX = minX + wholeRect.w;
+    int maxY = minY + wholeRect.h;
+
+    for (int y = minY; y < maxY; y += platformSprite.h) {
+        for (int x = minX; x < maxX; x += platformSprite.w) {
+            ScreenRect destRect = {
+                x: x,
+                y: y,
+                w: 0,
+                h: 0,
+            };
+            ScreenRect sourceRect = {
+                x: 0,
+                y: 0,
+                w: maxX - destRect.x,
+                h: maxY - destRect.y,
+            };
+            SDL_BlitSurface(platformSprite, &sourceRect, surface, &destRect);
+        }
+    }
 }
