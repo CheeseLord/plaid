@@ -2,9 +2,6 @@ module observer;
 
 private import std.stdio;
 
-private import globals;
-private import win_lose;
-
 
 enum NotifyType {
     WIN_LEVEL, LOSE_LEVEL,
@@ -26,16 +23,5 @@ public class ObserverList {
     {
         foreach (Observer observer; observers_) { observer(eventInfo); }
     }
-}
-
-
-bool initializeObservers()
-{
-    observers = new ObserverList();
-
-    // TODO [#33]: Move this somewhere more sensible.
-    win_lose.registerObservers();
-
-    return true;
 }
 

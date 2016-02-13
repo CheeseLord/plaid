@@ -14,6 +14,7 @@ private import observer;
 private import platform_functions;
 private import yaml_parser;
 private import load_level;
+private import win_lose;
 
 private enum InitIndex: int {
     NOTHING_INITIALIZED = 0,
@@ -175,6 +176,16 @@ bool cleanupSDL()
     //      call this function even in the case of errors in initialization."
     // Therefore, don't worry about checking if the SDL_Init succeeded.
     SDL_Quit();
+
+    return true;
+}
+
+
+bool initializeObservers()
+{
+    observers = new ObserverList();
+
+    win_lose.registerObservers();
 
     return true;
 }
