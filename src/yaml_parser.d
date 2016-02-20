@@ -115,7 +115,8 @@ class YamlParseException: Exception {
 
 void parseMagic()
 {
-    Node configRoot = Loader("config/magic.yaml").load();
+    // TODO [#13]: If the file doesn't exist, give a graceful error message.
+    Node configRoot = Loader("resources/config.yaml").load();
     if (!configRoot.isMapping) {
         // TODO [#13]: Error propagation.
         std.stdio.stderr.writefln("Error: YAML document is not a mapping.");
