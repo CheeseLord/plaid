@@ -45,26 +45,26 @@ platforms:
         y: 50
         w: 40
         h: 10
-      species: SOLID
+      species: PASSTHRU
 
     - rect:
         x: 40
         y: 60
         w: 40
         h: 10
-      species: SOLID
+      species: PASSTHRU
 
     - rect:
         x: 80
         y: 80
         w: 40
         h: 10
-      species: SOLID
+      species: PASSTHRU
 
     - rect:
         x: 160
         y: 50
         w: 40
         h: 100
-      species: SOLID
+      species: PASSTHRU
 

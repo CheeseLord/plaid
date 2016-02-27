@@ -59,15 +59,34 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     double    collisionTime;
     Direction collisionDirection;
     foreach (platform; platforms) {
-        if (entityCollides(player.rect, endRect, platform.rect,
-                           elapsedSeconds,
-                           collisionTime, collisionDirection)) {
-            collides = true;
-            if (collisionTime < firstCollisionTime) {
-                firstCollisionPlatform = platform;
-                firstCollisionTime = collisionTime;
-                firstCollisionDirection = collisionDirection;
+        if (platform.species == PlatformSpecies.SOLID) {
+            if (entityCollides(player.rect, endRect, platform.rect,
+                               elapsedSeconds,
+                               collisionTime, collisionDirection)) {
+                collides = true;
+                if (collisionTime < firstCollisionTime) {
+                    firstCollisionPlatform  = platform;
+                    firstCollisionTime      = collisionTime;
+                    firstCollisionDirection = collisionDirection;
+                }
             }
+        }
+        else if (platform.species == PlatformSpecies.PASSTHRU) {
+            if (entityCollidesWithTop(player.rect, endRect, platform.rect,
+                                      elapsedSeconds, collisionTime,
+                                      collisionDirection)) {
+                if (collisionDirection == Direction.DOWN) {
+                    collides = true;
+                    if (collisionTime < firstCollisionTime) {
+                        firstCollisionPlatform  = platform;
+                        firstCollisionTime      = collisionTime;
+                        firstCollisionDirection = collisionDirection;
+                    }
+                }
+            }
+        }
+        else {
+            assert(false);
         }
     }
 
@@ -117,6 +136,78 @@ pure private HitRect getNewPosition(HitRect rect, Velocity vel,
 
     return HitRect(newX, newY, rect.w, rect.h);
 }
+
+
+
+// Same as entityCollides, but checks for a collision with a horizontal line
+// segment.
+private bool entityCollidesWithTop(HitRect       start,
+                                   HitRect       end,
+                                   HitRect       obstacle,
+                                   double        elapsedTime,
+                                   out double    collisionTime,
+                                   out Direction collisionDirection)
+{
+    // The entity is assumed not to change size; that would complicate the
+    // collision-detection code considerably.
+    assert(abs(end.w - start.w) <  1.0e-6);
+    assert(abs(end.h - start.h) <  1.0e-6);
+
+    // The later calculations will fail if the entity doesn't move vertically,
+    // so handle that here as a special case.
+    // NOTE: This may cause a problem once we handle gravity sanely.
+    if (abs(end.y - start.y) < 1.0e-6) {
+        return false;
+    }
+
+    // Expand the top edge of obstacle left by the width of entity. This allows
+    // us to check for collisions between the bottom-left corner of entity and
+    // that line segment. Collision detection between a moving point and a line
+    // segment is easier than between a moving rect and a line segment.
+    WorldPoint expandedObstacleLeft = {
+        x: obstacle.left - start.w,
+        y: obstacle.top,
+    };
+    WorldPoint expandedObstacleRight = {
+        x: obstacle.right,
+        y: obstacle.top,
+    };
+
+    WorldPoint intersection;
+    if (trajectoryIntersectsHorizontal(start.BL, end.BL, expandedObstacleLeft,
+                                       expandedObstacleRight, intersection,
+                                       collisionDirection)) {
+        // What fraction of the elapsedTime elapsed before the collision?
+        double collisionFraction = (intersection.y - start.y) /
+                                   (end.y - start.y);
+        collisionTime = elapsedTime * collisionFraction;
+        return true;
+    }
+
+    return false;
+}
+
+private bool trajectoryIntersectsHorizontal(WorldPoint     start,
+                                            WorldPoint     end,
+                                            WorldPoint     obstacleLeft,
+                                            WorldPoint     obstacleRight,
+                                            out WorldPoint intersection,
+                                            out Direction  collisionDirection)
+{
+    if (segmentIntersectsHorizontal(start, end, obstacleLeft, obstacleRight,
+                                    intersection)) {
+        if (start.y < end.y) {
+            collisionDirection = Direction.UP;
+        }
+        else {
+            collisionDirection = Direction.DOWN;
+        }
+        return true;
+    }
+
+    return false;
+}
+
 
 
 /**
@@ -349,8 +440,8 @@ private bool segmentIntersectsVertical(WorldPoint s1Start, WorldPoint s1End,
     assert(abs(s2End.x - s2Start.x) < 1.0e-6);
     double s2x = s2Start.x;
 
-    if     ((s1Start.x < s2x && s1End.x > s2x) ||
-            (s1Start.x > s2x && s1End.x < s2x)) {
+    if     ((s1Start.x <= s2x && s1End.x >= s2x) ||
+            (s1Start.x >= s2x && s1End.x <= s2x)) {
         // Segment 1 starts and ends on opposite sides (horizontally speaking)
         // of segment 2, so an intersection is possible.
 
@@ -364,8 +455,8 @@ private bool segmentIntersectsVertical(WorldPoint s1Start, WorldPoint s1End,
                             (s2x - s1Start.x) +
                             s1Start.y;
 
-        if     ((s2Start.y < intersectY && intersectY < s2End.y) ||
-                (s2Start.y > intersectY && intersectY > s2End.y)) {
+        if     ((s2Start.y <= intersectY && intersectY <= s2End.y) ||
+                (s2Start.y >= intersectY && intersectY >= s2End.y)) {
             // The segments intersect.
             intersection = WorldPoint(s2x, intersectY);
             return true;
@@ -389,8 +480,8 @@ private bool segmentIntersectsHorizontal(WorldPoint s1Start, WorldPoint s1End,
     assert(abs(s2End.y - s2Start.y) < 1.0e-6);
     double s2y = s2Start.y;
 
-    if     ((s1Start.y < s2y && s1End.y > s2y) ||
-            (s1Start.y > s2y && s1End.y < s2y)) {
+    if     ((s1Start.y <= s2y && s1End.y >= s2y) ||
+            (s1Start.y >= s2y && s1End.y <= s2y)) {
         // Segment 1 starts and ends on opposite sides (vertically speaking)
         // of segment 2, so an intersection is possible.
 
@@ -404,8 +495,8 @@ private bool segmentIntersectsHorizontal(WorldPoint s1Start, WorldPoint s1End,
                             (s2y - s1Start.y) +
                             s1Start.x;
 
-        if     ((s2Start.x < intersectX && intersectX < s2End.x) ||
-                (s2Start.x > intersectX && intersectX > s2End.x)) {
+        if     ((s2Start.x <= intersectX && intersectX <= s2End.x) ||
+                (s2Start.x >= intersectX && intersectX >= s2End.x)) {
             // The segments intersect.
             intersection = WorldPoint(intersectX, s2y);
             return true;
