@@ -1,0 +1,121 @@
+---
+world-view:
+    x: 0
+    y: 0
+    w: 200
+    h: 150
+
+scroll-speed: 5
+
+player:
+    rect:
+        x: 20
+        y: 65
+        w: 15
+        h: 30
+    vel:
+        x: 0
+        y: 0
+
+platforms:
+    # Floor
+    - rect:
+        x: 0
+        y: 50
+        w: 200
+        h: 10
+      species: SOLID
+    # Left wall
+    - rect:
+        x: 0
+        y: 50
+        w: 10
+        h: 1000
+      species: SOLID
+    # Right wall
+    - rect:
+        x: 190
+        y: 50
+        w: 10
+        h: 1000
+      species: SOLID
+
+    # Layer 1
+    - rect:
+        x: 0
+        y: 100
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 2
+    - rect:
+        x: 40
+        y: 150
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 3
+    - rect:
+        x: 0
+        y: 200
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 4
+    - rect:
+        x: 40
+        y: 250
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 5
+    - rect:
+        x: 0
+        y: 300
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 6
+    - rect:
+        x: 40
+        y: 350
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 7
+    - rect:
+        x: 0
+        y: 400
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 8
+    - rect:
+        x: 40
+        y: 450
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 9
+    - rect:
+        x: 0
+        y: 500
+        w: 160
+        h: 10
+      species: SOLID
+
+    # Layer 10
+    - rect:
+        x: 40
+        y: 550
+        w: 160
+        h: 10
+      species: SOLID
