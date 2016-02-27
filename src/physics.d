@@ -74,32 +74,59 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     player.rect = getNewPosition(player.rect, player.vel, firstCollisionTime);
 
     if (collides) {
-        // Note: this assumes that once you collide downwardly with a platform,
-        // you stop moving. Once we add bouncing, this won't be correct.
-        if     (playerState == PlayerState.FALLING &&
-                firstCollisionDirection == Direction.DOWN) {
-            playerState = PlayerState.STANDING;
-        }
-
-        // TODO [#19]: Make the interaction update the velocity instead.
-        firstCollisionPlatform.interactWithPlayer(firstCollisionPlatform,
-                                                  player);
-
-        // TODO [#19]: Make the interaction update the velocity instead.
-        // Set only the component of the player's velocity that moves them into
-        // the platform to zero. Leave the other component unchanged.
-        switch (firstCollisionDirection) {
-            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
-            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
-            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
-            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
-            default: break;
-        }
+        bool affectsTrajectory = handlePlatformInteraction(
+            firstCollisionPlatform, firstCollisionDirection);
+        assert(affectsTrajectory);
 
         // Simulate the rest of the frame.
         updatePosition(elapsedSeconds - firstCollisionTime,
                        recursionDepth + 1);
     }
+}
+
+private bool handlePlatformInteraction(ref Platform platform,
+                                       Direction collisionDirection)
+{
+    switch (platform.species) {
+        case PlatformSpecies.SOLID:
+            return handleSolidPlatformInteraction(platform,
+                                                  collisionDirection);
+        case PlatformSpecies.PASSTHRU:
+            assert(false);
+        default:
+            assert(false);
+    }
+}
+
+// Handle an interaction between the player and a platform. collisionDirection
+// is the direction of the player's collision with the platform.
+private bool handleSolidPlatformInteraction(ref Platform platform,
+                                            Direction collisionDirection)
+{
+    assert(platform.species == PlatformSpecies.SOLID);
+
+    // Note: this assumes that once you collide downwardly with a platform,
+    // you stop moving. Once we add bouncing, this won't be correct.
+    if     (playerState == PlayerState.FALLING &&
+            collisionDirection == Direction.DOWN) {
+        playerState = PlayerState.STANDING;
+    }
+
+    // TODO [#19]: Make the interaction update the velocity instead.
+    // platform.interactWithPlayer(platform, player);
+
+    // TODO [#19]: Make the interaction update the velocity instead.
+    // Set only the component of the player's velocity that moves them into
+    // the platform to zero. Leave the other component unchanged.
+    switch (collisionDirection) {
+        case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
+        case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
+        case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
+        case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
+        default: break;
+    }
+
+    return true;
 }
 
 

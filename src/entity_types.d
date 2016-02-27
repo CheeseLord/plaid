@@ -16,8 +16,14 @@ struct Player {
 }
 
 struct Platform {
-    HitRect rect;
-    void function(ref Platform, ref Player) interactWithPlayer;
+    HitRect         rect;
+    PlatformSpecies species;
+    // void function(ref Platform, ref Player) interactWithPlayer;
+}
+
+enum PlatformSpecies {
+    SOLID,
+    PASSTHRU,
 }
 
 enum PlayerState {

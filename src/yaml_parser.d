@@ -1,5 +1,8 @@
 module yaml_parser;
 
+import std.conv;
+import std.traits;
+
 import yaml;
 
 import entity_types;
@@ -64,6 +67,25 @@ T[] parseYamlNode(T: T[])(Node node)
     return ret;
 }
 
+// Parse an enum.
+T parseYamlNode(T)(Node node) if (is(T == enum))
+{
+    string val = node.as!string;
+
+    foreach (member; EnumMembers!T) {
+        string memberName = to!string(member);
+        if (val == memberName) {
+            return member;
+        }
+    }
+
+    throw new YamlParseException("Cannot parse node as " ~
+        __traits(identifier, T) ~ ": no such enum member '" ~ val ~ "'.");
+}
+
+version(none) {
+///////////////////////////////////////////////////////////////////////////////
+
 // Special case: for the 'interactWithPlayer' field of a Platform, we can't
 // just parse a function from the YAML. So instead, the YAML contains a string,
 // and we check it against a table to figure out which function to use.
@@ -97,8 +119,11 @@ T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+}
+
 // For any other type, assume it's a primitive.
-T parseYamlNode(T)(Node node) if (!is(T == struct))
+T parseYamlNode(T)(Node node) if (!is(T == struct) && !is(T == enum))
 {
     return node.as!T;
 }

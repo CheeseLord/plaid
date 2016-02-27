@@ -24,21 +24,21 @@ platforms:
         y: 50
         w: 200
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
     # Left wall
     - rect:
         x: 0
         y: 50
         w: 10
         h: 1000
-      interactWithPlayer: scream
+      species: SOLID
     # Right wall
     - rect:
         x: 190
         y: 50
         w: 10
         h: 1000
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 1
     - rect:
@@ -46,7 +46,7 @@ platforms:
         y: 100
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 2 (left)
     - rect:
@@ -54,7 +54,7 @@ platforms:
         y: 150
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 2 (right)
     - rect:
@@ -62,7 +62,7 @@ platforms:
         y: 150
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 3
     - rect:
@@ -70,7 +70,7 @@ platforms:
         y: 200
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 4 (left)
     - rect:
@@ -78,7 +78,7 @@ platforms:
         y: 250
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 4 (right)
     - rect:
@@ -86,7 +86,7 @@ platforms:
         y: 250
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 5
     - rect:
@@ -94,7 +94,7 @@ platforms:
         y: 300
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 6 (left)
     - rect:
@@ -102,7 +102,7 @@ platforms:
         y: 350
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 6 (right)
     - rect:
@@ -110,7 +110,7 @@ platforms:
         y: 350
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 7
     - rect:
@@ -118,7 +118,7 @@ platforms:
         y: 400
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 8 (left)
     - rect:
@@ -126,7 +126,7 @@ platforms:
         y: 450
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 8 (right)
     - rect:
@@ -134,7 +134,7 @@ platforms:
         y: 450
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
     # Layer 9
     - rect:
@@ -142,5 +142,5 @@ platforms:
         y: 500
         w: 40
         h: 10
-      interactWithPlayer: scream
+      species: SOLID
 
