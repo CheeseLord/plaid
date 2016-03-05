@@ -24,6 +24,7 @@ struct Platform {
 enum PlatformSpecies {
     SOLID,
     PASSTHRU,
+    BOUNCY,
 }
 
 enum PlayerState {

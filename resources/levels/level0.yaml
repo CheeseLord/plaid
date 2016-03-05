@@ -52,7 +52,7 @@ platforms:
         y: 60
         w: 40
         h: 10
-      species: PASSTHRU
+      species: SOLID
 
     - rect:
         x: 80

@@ -51,7 +51,7 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
 
     HitRect endRect = getNewPosition(player.rect, player.vel, elapsedSeconds);
 
-    bool      collides = false;
+    bool      anyCollision = false;
     Platform  firstCollisionPlatform;
     double    firstCollisionTime = elapsedSeconds;
     Direction firstCollisionDirection;
@@ -59,40 +59,32 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     double    collisionTime;
     Direction collisionDirection;
     foreach (platform; platforms) {
-        if (platform.species == PlatformSpecies.SOLID) {
-            if (entityCollides(player.rect, endRect, platform.rect,
-                               elapsedSeconds,
-                               collisionTime, collisionDirection)) {
-                collides = true;
-                if (collisionTime < firstCollisionTime) {
-                    firstCollisionPlatform  = platform;
-                    firstCollisionTime      = collisionTime;
-                    firstCollisionDirection = collisionDirection;
-                }
-            }
-        }
-        else if (platform.species == PlatformSpecies.PASSTHRU) {
-            if (entityCollidesWithTop(player.rect, endRect, platform.rect,
-                                      elapsedSeconds, collisionTime,
-                                      collisionDirection)) {
-                if (collisionDirection == Direction.DOWN) {
-                    collides = true;
-                    if (collisionTime < firstCollisionTime) {
-                        firstCollisionPlatform  = platform;
-                        firstCollisionTime      = collisionTime;
-                        firstCollisionDirection = collisionDirection;
-                    }
-                }
-            }
+        bool thisOneCollides = false;
+        if (platform.species == PlatformSpecies.PASSTHRU) {
+            thisOneCollides = entityCollidesWithTop(player.rect, endRect,
+                    platform.rect, elapsedSeconds, collisionTime,
+                    collisionDirection) &&
+                collisionDirection == Direction.DOWN;
         }
         else {
-            assert(false);
+            thisOneCollides = entityCollides(player.rect, endRect,
+                    platform.rect, elapsedSeconds, collisionTime,
+                    collisionDirection);
+        }
+
+        if (thisOneCollides) {
+            anyCollision = true;
+            if (collisionTime < firstCollisionTime) {
+                firstCollisionPlatform  = platform;
+                firstCollisionTime      = collisionTime;
+                firstCollisionDirection = collisionDirection;
+            }
         }
     }
 
     player.rect = getNewPosition(player.rect, player.vel, firstCollisionTime);
 
-    if (collides) {
+    if (anyCollision) {
         // Note: this assumes that once you collide downwardly with a platform,
         // you stop moving. Once we add bouncing, this won't be correct.
         if     (playerState == PlayerState.FALLING &&
