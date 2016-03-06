@@ -12,8 +12,12 @@ import globals;
 
 
 private SDL_Window  *window;
-private SDL_Surface *playerSprite;
-private SDL_Surface *unscaledPlayerSprite;
+
+// TODO [#3]: Magic numbers bad.
+immutable int NUM_PLAYER_SPRITES = 2;
+private SDL_Surface *playerSprites;
+private SDL_Surface *unscaledPlayerSprites;
+
 private SDL_Surface *platformSprite;
 
 
@@ -48,33 +52,42 @@ bool setupGraphics()
 private bool loadSprites()
 {
     // TODO [#28]: Do we ever free this? Should we?
-    unscaledPlayerSprite = IMG_Load("resources/sprites/player.png");
-    if (unscaledPlayerSprite is null) {
+    unscaledPlayerSprites = IMG_Load("resources/sprites/player.png");
+    if (unscaledPlayerSprites is null) {
         printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
         return false;
     }
 
-    // When the unscaledPlayerSprite is blitted onto another surface, replace
+    // When the unscaledPlayerSprites is blitted onto another surface, replace
     // the alpha values of the affected pixels. This is necessary because we're
-    // copying it onto an intermediate surface (playerSprite) before we
+    // copying it onto an intermediate surface (playerSprites) before we
     // actually blit it onto the screen.
-    SDL_SetSurfaceBlendMode(unscaledPlayerSprite, SDL_BLENDMODE_NONE);
+    SDL_SetSurfaceBlendMode(unscaledPlayerSprites, SDL_BLENDMODE_NONE);
 
     // Note: we'll eventually need to move this somewhere else, so it can be
     // called when the window is resized.
     // Note: Calling SDL_ConvertSurface might make it faster to repeatedly blit
-    // playerSprite onto the screen.
+    // playerSprites onto the screen.
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
     sPlayerRect.x = 0;
     sPlayerRect.y = 0;
     // TODO [#28]: We don't free this.
-    playerSprite = createSimilarSurface(unscaledPlayerSprite,
-                                        sPlayerRect.w, sPlayerRect.h);
-    if (playerSprite is null) {
+    playerSprites = createSimilarSurface(unscaledPlayerSprites,
+                                         sPlayerRect.w * NUM_PLAYER_SPRITES,
+                                         sPlayerRect.h);
+    if (playerSprites is null) {
         printf("Error: Failed to create player surface: %s\n", SDL_GetError());
         return false;
     }
-    SDL_BlitScaled(unscaledPlayerSprite, null, playerSprite, &sPlayerRect);
+
+    ScreenRect sPlayerSpriteRect = {
+        x: 0,
+        y: 0,
+        w: playerSprites.w / NUM_PLAYER_SPRITES,
+        h: playerSprites.h,
+    };
+    SDL_BlitScaled(unscaledPlayerSprites, &sPlayerSpriteRect,
+                   playerSprites, &sPlayerRect);
 
     // TODO [#28]: We never free this. Should we?
     platformSprite = IMG_Load("resources/sprites/platform.png");
@@ -128,7 +141,14 @@ void renderGame()
         sPlatformRect = worldToScreenRect(platform.rect);
         drawPlatform(surface, sPlatformRect);
     }
-    SDL_BlitSurface(playerSprite, null, surface, &sPlayerRect);
+
+    ScreenRect sPlayerSpriteRect = {
+        x: 0,
+        y: 0,
+        w: playerSprites.w / NUM_PLAYER_SPRITES,
+        h: playerSprites.h,
+    };
+    SDL_BlitSurface(playerSprites, &sPlayerSpriteRect, surface, &sPlayerRect);
 
     SDL_UpdateWindowSurface(window);
 }
