@@ -1,20 +1,22 @@
 module load_level;
 
-import std.stdio;
+private import std.stdio;
 
-import derelict.sdl2.sdl;
-import derelict.util.exception;
-import yaml;
+private import derelict.sdl2.sdl;
+private import derelict.util.exception;
+private import yaml;
+private import sound;
 
-import globals;
-import platform_functions;
-import yaml_parser;
+private import globals;
+private import platform_functions;
+private import yaml_parser;
 
 // Set up game objects.
 bool setupObjects()
 {
     currentLevel = "level0";
     initializeLevel(currentLevel);
+    Sound.playBgm();
     return true;
 }
 

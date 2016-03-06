@@ -13,6 +13,7 @@ private import globals;
 private import graphics;
 private import observer;
 private import platform_functions;
+private import sound;
 private import yaml_parser;
 private import load_level;
 private import win_lose;
@@ -135,6 +136,7 @@ bool setupLibraries()
     bool success = true;
 
     success &= setupSDL();
+    success &= Sound.load();
 
     return success;
 }
@@ -181,6 +183,15 @@ bool setupSDL()
     }
     catch (Exception e) {
         stderr.writefln("Error: Failed to load SDL2_Image: %s", e.msg);
+        return false;
+    }
+
+    // Load and setup sound library.
+    try {
+        Sound.init();
+    }
+    catch (Exception e) {
+        stderr.writefln("Error: Failed to load SDL2_Mixer: %s", e.msg);
         return false;
     }
 
