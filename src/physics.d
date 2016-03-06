@@ -43,7 +43,8 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     // TODO [#3]: Magic numbers bad.
     // If we hit the maximum recursion depth, something has gone very wrong
     // elsewhere, and we have some fun debugging to do.
-    assert (recursionDepth < 20);
+    assert (recursionDepth < 20,
+            "possible infinite recursion detected in updatePosition.");
 
     debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
@@ -51,10 +52,10 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
 
     HitRect endRect = getNewPosition(player.rect, player.vel, elapsedSeconds);
 
-    bool      anyCollision = false;
-    Platform  firstCollisionPlatform;
-    double    firstCollisionTime = elapsedSeconds;
-    Direction firstCollisionDirection;
+    bool            anyCollision = false;
+    double          firstCollisionTime = elapsedSeconds;
+    Direction       firstCollisionDirection;
+    PlatformSpecies firstCollisionSpecies;
 
     double    collisionTime;
     Direction collisionDirection;
@@ -75,9 +76,9 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
         if (thisOneCollides) {
             anyCollision = true;
             if (collisionTime < firstCollisionTime) {
-                firstCollisionPlatform  = platform;
                 firstCollisionTime      = collisionTime;
                 firstCollisionDirection = collisionDirection;
+                firstCollisionSpecies   = platform.species;
             }
         }
     }
@@ -85,10 +86,9 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     player.rect = getNewPosition(player.rect, player.vel, firstCollisionTime);
 
     if (anyCollision) {
-        // Note: this assumes that once you collide downwardly with a platform,
-        // you stop moving. Once we add bouncing, this won't be correct.
         if     (playerState == PlayerState.FALLING &&
-                firstCollisionDirection == Direction.DOWN) {
+                firstCollisionDirection == Direction.DOWN &&
+                firstCollisionSpecies != PlatformSpecies.BOUNCY) {
             playerState = PlayerState.STANDING;
         }
 
@@ -98,12 +98,40 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
         // TODO [#19]: Make the interaction update the velocity instead.
         // Set only the component of the player's velocity that moves them into
         // the platform to zero. Leave the other component unchanged.
-        switch (firstCollisionDirection) {
-            case Direction.RIGHT: player.vel.x = min(player.vel.x, 0); break;
-            case Direction.LEFT:  player.vel.x = max(player.vel.x, 0); break;
-            case Direction.UP:    player.vel.y = min(player.vel.y, 0); break;
-            case Direction.DOWN:  player.vel.y = max(player.vel.y, 0); break;
-            default: break;
+        if (firstCollisionSpecies == PlatformSpecies.BOUNCY) {
+            switch (firstCollisionDirection) {
+                // For vertical collisions, bounce.
+                case Direction.UP:    player.vel.y = -abs(player.vel.y);
+                                      break;
+                case Direction.DOWN:  player.vel.y =  abs(player.vel.y);
+                                      break;
+
+                // For horizontal collisions, don't bounce, because the new
+                // horizontal velocity would just be immediately overwritten
+                // based on what keys the player is pressing. However, do zero
+                // that component of the player's velocity, because otherwise
+                // they'll just immediately collide with the same platform on
+                // the next iteration of this function, leading to infinite
+                // recursion.
+                case Direction.RIGHT: player.vel.x = min(player.vel.x, 0);
+                                      break;
+                case Direction.LEFT:  player.vel.x = max(player.vel.x, 0);
+                                      break;
+                default: break;
+            }
+        }
+        else {
+            switch (firstCollisionDirection) {
+                case Direction.RIGHT: player.vel.x = min(player.vel.x, 0);
+                                      break;
+                case Direction.LEFT:  player.vel.x = max(player.vel.x, 0);
+                                      break;
+                case Direction.UP:    player.vel.y = min(player.vel.y, 0);
+                                      break;
+                case Direction.DOWN:  player.vel.y = max(player.vel.y, 0);
+                                      break;
+                default:              break;
+            }
         }
 
         // Simulate the rest of the frame.

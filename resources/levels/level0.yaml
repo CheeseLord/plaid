@@ -52,7 +52,7 @@ platforms:
         y: 60
         w: 40
         h: 10
-      species: SOLID
+      species: BOUNCY
 
     - rect:
         x: 80
