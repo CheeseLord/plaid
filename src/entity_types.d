@@ -23,8 +23,10 @@ struct Platform {
 
 enum PlatformSpecies {
     SOLID,
-    PASSTHRU,
+    PASSTHRU, // Can jump up or sideways through the platform.
     BOUNCY,
+    CRUMBLE,  // Will start crumbling when next landed on.
+    FJORD,    // This is an ex-platform. Pass through in all directions.
 }
 
 enum PlayerState {

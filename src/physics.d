@@ -61,7 +61,10 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     Direction collisionDirection;
     foreach (platform; platforms) {
         bool thisOneCollides = false;
-        if (platform.species == PlatformSpecies.PASSTHRU) {
+        if (platform.species == PlatformSpecies.FJORD) {
+            // Pass through the platform no matter what.
+        }
+        else if (platform.species == PlatformSpecies.PASSTHRU) {
             thisOneCollides = entityCollidesWithTop(player.rect, endRect,
                     platform.rect, elapsedSeconds, collisionTime,
                     collisionDirection) &&
