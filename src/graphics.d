@@ -1,7 +1,7 @@
 module graphics;
 
 import std.algorithm: max;
-import std.random;  // FIXME
+import std.random;  // FIXME [#24]
 import std.stdio;
 
 import derelict.sdl2.image;
@@ -71,10 +71,8 @@ private bool loadSprites()
     // called when the window is resized.
     // Note: Calling SDL_ConvertSurface might make it faster to repeatedly blit
     // playerSprites onto the screen.
-    ScreenRect sPlayerRect = worldToScreenRect(player.rect);
-    sPlayerRect.x = 0;
-    sPlayerRect.y = 0;
     // TODO [#41]: Handle sprite sizing elsewhere.
+    ScreenRect sPlayerRect = worldToScreenRect(player.rect);
     playerSpriteWidth = sPlayerRect.w;
     playerSpriteHeight = sPlayerRect.h;
     // TODO [#28]: We don't free this.
@@ -86,14 +84,8 @@ private bool loadSprites()
         return false;
     }
 
-    ScreenRect sPlayerSpriteRect = {
-        x: 0,
-        y: 0,
-        w: playerSpriteWidth,
-        h: playerSpriteHeight,
-    };
-    SDL_BlitScaled(unscaledPlayerSprites, &sPlayerSpriteRect,
-                   playerSprites, &sPlayerRect);
+    SDL_BlitScaled(unscaledPlayerSprites, null,
+                   playerSprites, null);
 
     // TODO [#28]: We never free this. Should we?
     platformSprite = IMG_Load("resources/sprites/platform.png");
@@ -148,7 +140,7 @@ void renderGame()
         drawPlatform(surface, sPlatformRect);
     }
 
-    // FIXME: Remove this
+    // FIXME [#24]: Remove this
     int r = std.random.uniform(0, 2);
     ScreenRect sPlayerSpriteRect = {
         x: r * playerSpriteWidth,
