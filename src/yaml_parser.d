@@ -167,6 +167,10 @@ void parseLevel(string levelName)
     parseYamlTo!(player)         (configRoot, "player");
     parseYamlTo!(platforms)      (configRoot, "platforms");
     parseYamlTo!(worldScrollRate)(configRoot, "scroll-speed");
+
+    crumblingPlatforms.length = platforms.length;
+    crumbleTimers.length      = platforms.length;
+    numCrumblingPlatforms     = 0;
 }
 
 void parseYamlTo(alias parseTo)(Node configRoot, const(char[]) yamlName)
