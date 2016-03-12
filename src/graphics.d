@@ -1,6 +1,7 @@
 module graphics;
 
 import std.algorithm: max;
+import std.random;  // FIXME
 import std.stdio;
 
 import derelict.sdl2.image;
@@ -142,8 +143,10 @@ void renderGame()
         drawPlatform(surface, sPlatformRect);
     }
 
+    // FIXME: Remove this
+    int r = uniform(0, 2);
     ScreenRect sPlayerSpriteRect = {
-        x: 0,
+        x: r * playerSprites.w / NUM_PLAYER_SPRITES,
         y: 0,
         w: playerSprites.w / NUM_PLAYER_SPRITES,
         h: playerSprites.h,
