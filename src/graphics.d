@@ -16,6 +16,8 @@ private SDL_Window  *window;
 
 // TODO [#3]: Magic numbers bad.
 immutable int NUM_PLAYER_SPRITES = 2;
+// TODO [#41]: Handle sprite sizing elsewhere.
+int playerSpriteWidth, playerSpriteHeight;
 private SDL_Surface *playerSprites;
 private SDL_Surface *unscaledPlayerSprites;
 
@@ -72,10 +74,13 @@ private bool loadSprites()
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
     sPlayerRect.x = 0;
     sPlayerRect.y = 0;
+    // TODO [#41]: Handle sprite sizing elsewhere.
+    playerSpriteWidth = sPlayerRect.w;
+    playerSpriteHeight = sPlayerRect.h;
     // TODO [#28]: We don't free this.
     playerSprites = createSimilarSurface(unscaledPlayerSprites,
-                                         sPlayerRect.w * NUM_PLAYER_SPRITES,
-                                         sPlayerRect.h);
+                                         playerSpriteWidth * NUM_PLAYER_SPRITES,
+                                         playerSpriteHeight);
     if (playerSprites is null) {
         printf("Error: Failed to create player surface: %s\n", SDL_GetError());
         return false;
@@ -84,8 +89,8 @@ private bool loadSprites()
     ScreenRect sPlayerSpriteRect = {
         x: 0,
         y: 0,
-        w: playerSprites.w / NUM_PLAYER_SPRITES,
-        h: playerSprites.h,
+        w: playerSpriteWidth,
+        h: playerSpriteHeight,
     };
     SDL_BlitScaled(unscaledPlayerSprites, &sPlayerSpriteRect,
                    playerSprites, &sPlayerRect);
@@ -144,12 +149,12 @@ void renderGame()
     }
 
     // FIXME: Remove this
-    int r = uniform(0, 2);
+    int r = std.random.uniform(0, 2);
     ScreenRect sPlayerSpriteRect = {
-        x: r * playerSprites.w / NUM_PLAYER_SPRITES,
+        x: r * playerSpriteWidth,
         y: 0,
-        w: playerSprites.w / NUM_PLAYER_SPRITES,
-        h: playerSprites.h,
+        w: playerSpriteWidth,
+        h: playerSpriteHeight,
     };
     SDL_BlitSurface(playerSprites, &sPlayerSpriteRect, surface, &sPlayerRect);
 
@@ -187,3 +192,4 @@ void drawPlatform(SDL_Surface *surface, const(ScreenRect) wholeRect)
         }
     }
 }
+
