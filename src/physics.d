@@ -48,7 +48,7 @@ private void updatePlatforms(double elapsedSeconds)
     while (i < numCrumblingPlatforms) {
         crumbleTimers[i] -= elapsedSeconds;
         if (crumbleTimers[i] <= 0.0) {
-            platforms[crumblingPlatforms[i]].species = PlatformSpecies.FJORD;
+            platforms[crumblingPlatforms[i]].fjord = true;
 
             // Swap that platform to the end of the crumble lists, then remove
             // it.
@@ -83,16 +83,15 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     size_t          firstCollisionIndex = 0;
     double          firstCollisionTime = elapsedSeconds;
     Direction       firstCollisionDirection;
-    PlatformSpecies firstCollisionSpecies;
 
     double    collisionTime;
     Direction collisionDirection;
     foreach (size_t index, ref platform; platforms) {
         bool thisOneCollides = false;
-        if (platform.species == PlatformSpecies.FJORD) {
-            // Pass through the platform no matter what.
+        if (platform.fjord) {
+            // Pass through the platform regardless of the other bits.
         }
-        else if (platform.species == PlatformSpecies.PASSTHRU) {
+        else if (platform.passthru) {
             thisOneCollides = entityCollidesWithTop(player.rect, endRect,
                     platform.rect, elapsedSeconds, collisionTime,
                     collisionDirection) &&
@@ -110,7 +109,6 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
                 firstCollisionIndex     = index;
                 firstCollisionTime      = collisionTime;
                 firstCollisionDirection = collisionDirection;
-                firstCollisionSpecies   = platform.species;
             }
         }
     }
@@ -120,20 +118,20 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     if (anyCollision) {
         if     (playerState == PlayerState.FALLING &&
                 firstCollisionDirection == Direction.DOWN &&
-                firstCollisionSpecies != PlatformSpecies.BOUNCY) {
+                !platforms[firstCollisionIndex].bouncy) {
             playerState = PlayerState.STANDING;
         }
 
-        if     (firstCollisionSpecies == PlatformSpecies.CRUMBLE &&
+        if     (platforms[firstCollisionIndex].crumble &&
                 firstCollisionDirection == Direction.DOWN) {
             assert (numCrumblingPlatforms <= crumblingPlatforms.length,
                     "Number of crumbling platforms exceeds total number of "
                     "platforms.");
             crumblingPlatforms[numCrumblingPlatforms] = firstCollisionIndex;
             crumbleTimers     [numCrumblingPlatforms] = CRUMBLE_TIME;
-            // Change the platform's species so it doesn't get re-added to the
-            // crumble list.
-            platforms[firstCollisionIndex].species = PlatformSpecies.SOLID;
+            // Clear the crumble bit so the platform doesn't get re-added to
+            // the crumble list.
+            platforms[firstCollisionIndex].crumble = false;
             numCrumblingPlatforms++;
         }
 
@@ -143,7 +141,7 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
         // TODO [#19]: Make the interaction update the velocity instead?
         // Set only the component of the player's velocity that moves them into
         // the platform to zero. Leave the other component unchanged.
-        if (firstCollisionSpecies == PlatformSpecies.BOUNCY) {
+        if (platforms[firstCollisionIndex].bouncy) {
             switch (firstCollisionDirection) {
                 // For vertical collisions, bounce.
                 case Direction.UP:    player.vel.y = -abs(player.vel.y);

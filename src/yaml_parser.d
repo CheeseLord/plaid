@@ -122,6 +122,40 @@ T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
 ///////////////////////////////////////////////////////////////////////////////
 }
 
+T parseYamlNode(T : Platform)(Node node)
+{
+    enum PlatformSpecies {
+        SOLID,
+        PASSTHRU,
+        BOUNCY,
+        CRUMBLE,
+        FJORD,
+    }
+
+    struct ParsedPlatform {
+        HitRect rect;
+        PlatformSpecies species;
+    }
+
+    ParsedPlatform intermediate = parseYamlNode!ParsedPlatform(node);
+
+    Platform ret = {
+        rect: intermediate.rect,
+    };
+    switch(intermediate.species) {
+        case PlatformSpecies.SOLID:    /* Don't set any bits */ break;
+        case PlatformSpecies.PASSTHRU: ret.passthru = true;     break;
+        case PlatformSpecies.BOUNCY:   ret.bouncy   = true;     break;
+        case PlatformSpecies.CRUMBLE:  ret.crumble  = true;     break;
+        case PlatformSpecies.FJORD:    ret.fjord    = true;     break;
+        default:
+            // The parse should already have failed before we get here.
+            assert(false);
+    }
+
+    return ret;
+}
+
 // For any other type, assume it's a primitive.
 T parseYamlNode(T)(Node node) if (!is(T == struct) && !is(T == enum))
 {
