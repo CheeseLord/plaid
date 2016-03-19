@@ -24,12 +24,13 @@ struct Platform {
     // These are accessed as bool members of Platform, for example:
     //     if (somePlatform.passthru) { doSomething(); }
     mixin(bitfields!(
-        bool, "passthru", 1, // Can jump up or sideways through the platform.
-        bool, "bouncy",   1,
-        bool, "crumble",  1, // Will start crumbling when next landed on.
-        bool, "fjord",    1, // This is an ex-platform. Pass through in all
-                             // directions.
-        uint, "",         4  /* pad to a standard size */));
+        bool, "passthru",  1, // Can jump up or sideways through the platform.
+        bool, "bouncy",    1,
+        bool, "crumble",   1, // Will start crumbling when next landed on.
+        bool, "fjord",     1, // This is an ex-platform. Pass through in all
+                              // directions.
+        bool, "invisible", 1,
+        uint, "",          3  /* pad to a standard size */));
 
     // void function(ref Platform, ref Player) interactWithPlayer;
 }

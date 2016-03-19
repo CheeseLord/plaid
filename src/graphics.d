@@ -135,9 +135,11 @@ void renderGame()
     ScreenRect sPlatformRect;
 
     clearScreen();
-    foreach (platform; platforms) {
-        sPlatformRect = worldToScreenRect(platform.rect);
-        drawPlatform(surface, sPlatformRect);
+    foreach (const ref platform; platforms) {
+        if (!platform.invisible) {
+            sPlatformRect = worldToScreenRect(platform.rect);
+            drawPlatform(surface, sPlatformRect);
+        }
     }
 
     // FIXME [#24]: Remove this

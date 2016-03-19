@@ -48,7 +48,9 @@ private void updatePlatforms(double elapsedSeconds)
     while (i < numCrumblingPlatforms) {
         crumbleTimers[i] -= elapsedSeconds;
         if (crumbleTimers[i] <= 0.0) {
-            platforms[crumblingPlatforms[i]].fjord = true;
+            // Finished crumbling.
+            platforms[crumblingPlatforms[i]].fjord     = true;
+            platforms[crumblingPlatforms[i]].invisible = true;
 
             // Swap that platform to the end of the crumble lists, then remove
             // it.
