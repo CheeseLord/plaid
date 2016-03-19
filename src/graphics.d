@@ -11,21 +11,22 @@ import geometry_types;
 import globals;
 
 
-private SDL_Window  *window;
-
 // TODO [#3]: Magic numbers bad.
-immutable int NUM_PLAYER_SPRITES = 2;
+immutable int    NUM_PLAYER_SPRITES       = 2;
+immutable double ANIMATION_FRAME_LENGTH   = 0.3;
+immutable double ANIMATION_PROGRESS_RESET = 100 * ANIMATION_FRAME_LENGTH;
+
+private SDL_Window* window;
+
 // TODO [#41]: Handle sprite sizing elsewhere.
-int playerSpriteWidth, playerSpriteHeight;
-private SDL_Surface *playerSprites;
-private SDL_Surface *unscaledPlayerSprites;
+private int playerSpriteWidth;
+private int playerSpriteHeight;
+private SDL_Surface* playerSprites;
+private SDL_Surface* unscaledPlayerSprites;
 
-private SDL_Surface *platformSprite;
+private SDL_Surface* platformSprite;
 
-double playTime = 0;
-// TODO [#3]: Magic numbers bad.
-immutable double ANIMATION_FRAME_LENGTH = 0.3;
-immutable double PLAY_TIME_RESET = 100 * ANIMATION_FRAME_LENGTH;
+private double animationProgress = 0;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,7 +78,7 @@ private bool loadSprites()
     // playerSprites onto the screen.
     // TODO [#41]: Handle sprite sizing elsewhere.
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
-    playerSpriteWidth = sPlayerRect.w;
+    playerSpriteWidth  = sPlayerRect.w;
     playerSpriteHeight = sPlayerRect.h;
     // TODO [#28]: We don't free this.
     playerSprites = createSimilarSurface(unscaledPlayerSprites,
@@ -133,10 +134,10 @@ bool cleanupGraphics()
 
 void renderGame(double elapsedSeconds)
 {
-    playTime += elapsedSeconds;
-    playTime %= PLAY_TIME_RESET;
+    animationProgress += elapsedSeconds;
+    animationProgress %= ANIMATION_PROGRESS_RESET;
 
-    SDL_Surface *surface = SDL_GetWindowSurface(window);
+    SDL_Surface* surface = SDL_GetWindowSurface(window);
 
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
     ScreenRect sPlatformRect;
@@ -149,7 +150,8 @@ void renderGame(double elapsedSeconds)
         }
     }
 
-    int animationFrameNumber = cast(int)(playTime / ANIMATION_FRAME_LENGTH);
+    int animationFrameNumber = cast(int)(animationProgress /
+                                         ANIMATION_FRAME_LENGTH);
     ScreenRect sPlayerSpriteRect = {
         x: (animationFrameNumber % NUM_PLAYER_SPRITES) * playerSpriteWidth,
         y: 0,
@@ -163,11 +165,11 @@ void renderGame(double elapsedSeconds)
 
 void clearScreen()
 {
-    SDL_Surface *surface = SDL_GetWindowSurface(window);
+    SDL_Surface* surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 }
 
-void drawPlatform(SDL_Surface *surface, const(ScreenRect) wholeRect)
+void drawPlatform(SDL_Surface* surface, const(ScreenRect) wholeRect)
 {
     int minX = wholeRect.x;
     int minY = wholeRect.y;

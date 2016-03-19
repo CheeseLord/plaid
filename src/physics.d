@@ -20,7 +20,7 @@ public void updateWorld(double elapsedSeconds)
         playerState = PlayerState.FALLING;
     }
     updatePlatforms(elapsedSeconds);
-    updatePosition(elapsedSeconds, 0);
+    updatePlayer(elapsedSeconds, 0);
     // TODO [#31]: Factor this out.
     updateView(elapsedSeconds);
     // TODO [#33]: Win and lose conditions should happen elsewhere.
@@ -67,13 +67,13 @@ private void updatePlatforms(double elapsedSeconds)
 }
 
 
-private void updatePosition(double elapsedSeconds, size_t recursionDepth)
+private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
 {
     // TODO [#3]: Magic numbers bad.
     // If we hit the maximum recursion depth, something has gone very wrong
     // elsewhere, and we have some fun debugging to do.
     assert (recursionDepth < 20,
-            "possible infinite recursion detected in updatePosition.");
+            "possible infinite recursion detected in updatePlayer.");
 
     debug (player_pos) {
         writefln("x = %0.2f, y = %0.2f", player.rect.left, player.rect.bottom);
@@ -81,10 +81,10 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
 
     HitRect endRect = getNewPosition(player.rect, player.vel, elapsedSeconds);
 
-    bool            anyCollision = false;
-    size_t          firstCollisionIndex = 0;
-    double          firstCollisionTime = elapsedSeconds;
-    Direction       firstCollisionDirection;
+    bool      anyCollision        = false;
+    size_t    firstCollisionIndex = 0;
+    double    firstCollisionTime  = elapsedSeconds;
+    Direction firstCollisionDirection;
 
     double    collisionTime;
     Direction collisionDirection;
@@ -180,8 +180,8 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
         }
 
         // Simulate the rest of the frame.
-        updatePosition(elapsedSeconds - firstCollisionTime,
-                       recursionDepth + 1);
+        updatePlayer(elapsedSeconds - firstCollisionTime,
+                     recursionDepth + 1);
     }
 }
 
