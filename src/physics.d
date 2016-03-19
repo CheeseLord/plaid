@@ -137,10 +137,7 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
             numCrumblingPlatforms++;
         }
 
-        // TODO [#19]: Make the interaction update the velocity instead?
-        // platform.interactWithPlayer(platform, player);
 
-        // TODO [#19]: Make the interaction update the velocity instead?
         // Set only the component of the player's velocity that moves them into
         // the platform to zero. Leave the other component unchanged.
         if (platforms[firstCollisionIndex].bouncy) {
