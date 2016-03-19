@@ -45,7 +45,7 @@ platforms:
         y: 50
         w: 40
         h: 10
-      species: PASSTHRU
+      species: JUMPTHRU
 
     - rect:
         x: 40
@@ -66,5 +66,5 @@ platforms:
         y: 50
         w: 40
         h: 100
-      species: PASSTHRU
+      species: JUMPTHRU
 
