@@ -82,45 +82,8 @@ T parseYamlNode(T)(Node node) if (is(T == enum))
         __traits(identifier, T) ~ ": no such enum member '" ~ val ~ "'.");
 }
 
-version(none) {
-///////////////////////////////////////////////////////////////////////////////
-
-// Special case: for the 'interactWithPlayer' field of a Platform, we can't
-// just parse a function from the YAML. So instead, the YAML contains a string,
-// and we check it against a table to figure out which function to use.
-//
-// Note: this will work fine as long as the following statement holds:
-//     A YAML node is parsed as type 'void function(ref Platform, ref Player)'
-//     if and only if it is a Platform's interactWithPlayer function.
-// If we end up needing this solution for two things with the same type, then
-// we'll need to do something else. In that case, I think we can move the check
-// up a level: instead of having a specialization for the function type, we add
-// a special case to the struct parsing code where if we're parsing a Platform
-// and this field is named 'interactWithPlayer', then parse it as a string and
-// do the table lookup.
-T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
-{
-    if (!node.isString) {
-        throw new YamlParseException("Cannot parse node as Platform collision "
-            "callback: node is not a string.");
-    }
-
-    immutable T[string] TABLE = [
-        "scream": &scream,
-    ];
-
-    if ((node.as!string) in TABLE) {
-        return TABLE[node.as!string];
-    }
-    else {
-        throw new YamlParseException("Cannot parse node as Platform collision "
-            "callback: no such callback '" ~ node.as!string ~ "'.");
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-}
-
+// Special case for platforms, since they're modeled differently in the yaml
+// and the code.
 T parseYamlNode(T : Platform)(Node node)
 {
     enum PlatformSpecies {
