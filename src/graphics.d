@@ -1,7 +1,6 @@
 module graphics;
 
 import std.algorithm: max;
-import std.random;  // FIXME [#24]
 import std.stdio;
 
 import derelict.sdl2.image;
@@ -22,6 +21,9 @@ private SDL_Surface *playerSprites;
 private SDL_Surface *unscaledPlayerSprites;
 
 private SDL_Surface *platformSprite;
+
+// TODO [#3]: Magic numbers bad.
+immutable double ANIMATION_FRAME_LENGTH = 0.3;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -142,10 +144,9 @@ void renderGame()
         }
     }
 
-    // FIXME [#24]: Remove this
-    int r = std.random.uniform(0, 2);
+    int animationFrameNumber = cast(int)(playTime / ANIMATION_FRAME_LENGTH);
     ScreenRect sPlayerSpriteRect = {
-        x: r * playerSpriteWidth,
+        x: (animationFrameNumber % NUM_PLAYER_SPRITES) * playerSpriteWidth,
         y: 0,
         w: playerSpriteWidth,
         h: playerSpriteHeight,
