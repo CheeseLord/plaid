@@ -6,7 +6,8 @@ screen-view:
     w: 640
     h: 480
 
-gravity:       -100
-walk-speed:    30
-jump-strength: 110
+gravity:              -100
+max-walk-speed:       30
+walk-acceleration:    8
+jump-strength:        110
 

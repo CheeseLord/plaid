@@ -18,7 +18,8 @@ immutable double CRUMBLE_TIME = 1.0;
 double gravity;
 double worldScrollRate;
 
-double playerWalkSpeed;
+double playerWalkAcceleration;
+double playerMaxWalkSpeed;
 double playerJumpStrength;
 
 // Game state

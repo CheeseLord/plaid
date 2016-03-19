@@ -184,10 +184,11 @@ void parseMagic()
         return;
     }
 
-    parseYamlTo!(sViewRect)         (configRoot, "screen-view");
-    parseYamlTo!(gravity)           (configRoot, "gravity");
-    parseYamlTo!(playerWalkSpeed)   (configRoot, "walk-speed");
-    parseYamlTo!(playerJumpStrength)(configRoot, "jump-strength");
+    parseYamlTo!(sViewRect)                 (configRoot, "screen-view");
+    parseYamlTo!(gravity)                   (configRoot, "gravity");
+    parseYamlTo!(playerMaxWalkSpeed)        (configRoot, "max-walk-speed");
+    parseYamlTo!(playerWalkAcceleration)    (configRoot, "walk-acceleration");
+    parseYamlTo!(playerJumpStrength)        (configRoot, "jump-strength");
 }
 
 

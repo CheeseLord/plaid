@@ -1,6 +1,8 @@
 module eventHandler;
 import std.stdio;
 
+private import std.algorithm;
+
 private import derelict.sdl2.sdl;
 
 private import globals;
@@ -35,13 +37,24 @@ void handleEvents()
     }
 
     if      (keyState[SDL_SCANCODE_LEFT] && ! keyState[SDL_SCANCODE_RIGHT]) {
-        player.vel.x = -playerWalkSpeed;
+        player.vel.x += -playerWalkAcceleration;
+        if (player.vel.x <  -playerMaxWalkSpeed) {
+            player.vel.x = -playerMaxWalkSpeed;
+        }
     }
     else if (keyState[SDL_SCANCODE_RIGHT] && ! keyState[SDL_SCANCODE_LEFT]) {
-        player.vel.x =  playerWalkSpeed;
+        player.vel.x += playerWalkAcceleration;
+        if (player.vel.x > playerMaxWalkSpeed) {
+            player.vel.x = playerMaxWalkSpeed;
+        }
     }
     else {
-        player.vel.x =   0;
+        if (player.vel.x > 0){
+            player.vel.x =  max(player.vel.x - playerWalkAcceleration, 0);
+        }
+        else if (player.vel.x < 0){
+            player.vel.x =  min(player.vel.x + playerWalkAcceleration, 0);
+        }
     }
     if (playerState == PlayerState.STANDING) {
         if (keyState[SDL_SCANCODE_UP]) {
