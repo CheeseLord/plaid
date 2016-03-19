@@ -27,8 +27,6 @@ Platform[] platforms;
 PlayerState playerState = PlayerState.FALLING;
 string currentLevel;
 
-double playTime = 0;
-
 // Lists of the indices of the platforms that are currently crumbling and the
 // times left until they finish crumbling, in no particular order. These arrays
 // both have the same length as platforms, but only the elements from 0 to

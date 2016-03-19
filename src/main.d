@@ -41,7 +41,6 @@ void runGame()
 
         handleEvents();
         updateGame(currStartTime - prevStartTime);
-        renderGame();
 
         // If we haven't used a full frame worth of time, sleep for the rest of
         // the frame.
@@ -61,12 +60,11 @@ void updateGame(Duration elapsedTime)
     elapsedTime.split!("seconds", "nsecs")(secs, nsecs);
     double elapsedSeconds = cast(double)(secs) + 1.0e-9 * cast(double)(nsecs);
 
-    playTime += elapsedSeconds;
-
     debug {
         writefln("Updating game. %s.%07s seconds elapsed.", secs, nsecs / 100);
     }
 
     updateWorld(elapsedSeconds);
+    renderGame(elapsedSeconds);
 }
 

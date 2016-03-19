@@ -22,8 +22,10 @@ private SDL_Surface *unscaledPlayerSprites;
 
 private SDL_Surface *platformSprite;
 
+double playTime = 0;
 // TODO [#3]: Magic numbers bad.
 immutable double ANIMATION_FRAME_LENGTH = 0.3;
+immutable double PLAY_TIME_RESET = 100 * ANIMATION_FRAME_LENGTH;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,8 +131,11 @@ bool cleanupGraphics()
 ///////////////////////////////////////////////////////////////////////////////
 // Main rendering logic
 
-void renderGame()
+void renderGame(double elapsedSeconds)
 {
+    playTime += elapsedSeconds;
+    playTime %= PLAY_TIME_RESET;
+
     SDL_Surface *surface = SDL_GetWindowSurface(window);
 
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
