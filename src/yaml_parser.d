@@ -8,7 +8,6 @@ import yaml;
 import entity_types;
 import geometry_types;
 import globals;
-import platform_functions;
 
 
 // Parse a YAML associative array.

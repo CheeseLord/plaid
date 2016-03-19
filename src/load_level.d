@@ -8,7 +8,6 @@ private import yaml;
 private import sound;
 
 private import globals;
-private import platform_functions;
 private import yaml_parser;
 
 // Set up game objects.

@@ -12,7 +12,6 @@ private import geometry;
 private import globals;
 private import graphics;
 private import observer;
-private import platform_functions;
 private import sound;
 private import yaml_parser;
 private import load_level;
