@@ -144,10 +144,10 @@ T parseYamlNode(T : Platform)(Node node)
     };
     switch(intermediate.species) {
         case PlatformSpecies.SOLID:    /* Don't set any bits */ break;
-        case PlatformSpecies.PASSTHRU: ret.passthru = true;     break;
-        case PlatformSpecies.BOUNCY:   ret.bouncy   = true;     break;
-        case PlatformSpecies.CRUMBLE:  ret.crumble  = true;     break;
-        case PlatformSpecies.FJORD:    ret.fjord    = true;     break;
+        case PlatformSpecies.PASSTHRU: ret.jumpthru   = true;   break;
+        case PlatformSpecies.BOUNCY:   ret.bouncy     = true;   break;
+        case PlatformSpecies.CRUMBLE:  ret.crumble    = true;   break;
+        case PlatformSpecies.FJORD:    ret.intangible = true;   break;
         default:
             // The parse should already have failed before we get here.
             assert(false);

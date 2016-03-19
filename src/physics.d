@@ -49,8 +49,8 @@ private void updatePlatforms(double elapsedSeconds)
         crumbleTimers[i] -= elapsedSeconds;
         if (crumbleTimers[i] <= 0.0) {
             // Finished crumbling.
-            platforms[crumblingPlatforms[i]].fjord     = true;
-            platforms[crumblingPlatforms[i]].invisible = true;
+            platforms[crumblingPlatforms[i]].intangible = true;
+            platforms[crumblingPlatforms[i]].invisible  = true;
 
             // Swap that platform to the end of the crumble lists, then remove
             // it.
@@ -90,10 +90,10 @@ private void updatePosition(double elapsedSeconds, size_t recursionDepth)
     Direction collisionDirection;
     foreach (size_t index, ref platform; platforms) {
         bool thisOneCollides = false;
-        if (platform.fjord) {
+        if (platform.intangible) {
             // Pass through the platform regardless of the other bits.
         }
-        else if (platform.passthru) {
+        else if (platform.jumpthru) {
             thisOneCollides = entityCollidesWithTop(player.rect, endRect,
                     platform.rect, elapsedSeconds, collisionTime,
                     collisionDirection) &&
