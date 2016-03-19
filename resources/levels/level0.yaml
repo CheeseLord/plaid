@@ -24,47 +24,51 @@ platforms:
         y: 0
         w: 200
         h: 10
-      species: SOLID
+      species: []
     # Left wall
     - rect:
         x: 0
         y: 0
         w: 10
         h: 1000
-      species: SOLID
+      species: []
     # Right wall
     - rect:
         x: 190
         y: 0
         w: 10
         h: 1000
-      species: SOLID
+      species: []
 
     - rect:
         x: 0
         y: 50
         w: 40
         h: 10
-      species: JUMPTHRU
+      species:
+        - JUMPTHRU
 
     - rect:
         x: 40
         y: 60
         w: 40
         h: 10
-      species: BOUNCY
+      species:
+        - BOUNCY
 
     - rect:
         x: 80
         y: 80
         w: 40
         h: 10
-      species: CRUMBLE
+      species:
+        - CRUMBLE
 
     - rect:
         x: 160
         y: 50
         w: 40
         h: 100
-      species: JUMPTHRU
+      species:
+        - JUMPTHRU
 

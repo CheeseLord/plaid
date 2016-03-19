@@ -125,7 +125,6 @@ T parseYamlNode(T : void function(ref Platform, ref Player))(Node node)
 T parseYamlNode(T : Platform)(Node node)
 {
     enum PlatformSpecies {
-        SOLID,
         JUMPTHRU,
         INTANGIBLE,
         INVISIBLE,
@@ -134,8 +133,8 @@ T parseYamlNode(T : Platform)(Node node)
     }
 
     struct ParsedPlatform {
-        HitRect rect;
-        PlatformSpecies species;
+        HitRect           rect;
+        PlatformSpecies[] species;
     }
 
     ParsedPlatform intermediate = parseYamlNode!ParsedPlatform(node);
@@ -143,16 +142,17 @@ T parseYamlNode(T : Platform)(Node node)
     Platform ret = {
         rect: intermediate.rect,
     };
-    switch(intermediate.species) {
-        case PlatformSpecies.SOLID:      /* Don't set any bits */ break;
-        case PlatformSpecies.JUMPTHRU:   ret.jumpthru   = true;   break;
-        case PlatformSpecies.INTANGIBLE: ret.intangible = true;   break;
-        case PlatformSpecies.INVISIBLE:  ret.invisible  = true;   break;
-        case PlatformSpecies.BOUNCY:     ret.bouncy     = true;   break;
-        case PlatformSpecies.CRUMBLE:    ret.crumble    = true;   break;
-        default:
-            // The parse should already have failed before we get here.
-            assert(false);
+    foreach (PlatformSpecies species; intermediate.species) {
+        switch(species) {
+            case PlatformSpecies.JUMPTHRU:   ret.jumpthru   = true; break;
+            case PlatformSpecies.INTANGIBLE: ret.intangible = true; break;
+            case PlatformSpecies.INVISIBLE:  ret.invisible  = true; break;
+            case PlatformSpecies.BOUNCY:     ret.bouncy     = true; break;
+            case PlatformSpecies.CRUMBLE:    ret.crumble    = true; break;
+            default:
+                // The parse should already have failed before we get here.
+                assert(false);
+        }
     }
 
     return ret;
