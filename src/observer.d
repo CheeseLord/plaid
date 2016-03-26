@@ -5,6 +5,7 @@ private import std.stdio;
 
 enum NotifyType {
     WIN_LEVEL, LOSE_LEVEL,
+    PLAYER_JUMP, PLAYER_LAND, PLAYER_BOUNCE,
 };
 
 

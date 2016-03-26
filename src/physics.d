@@ -122,6 +122,7 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
                 firstCollisionDirection == Direction.DOWN &&
                 !platforms[firstCollisionIndex].bouncy) {
             playerState = PlayerState.STANDING;
+            observers.notify(NotifyType.PLAYER_LAND);
         }
 
         if     (platforms[firstCollisionIndex].crumble &&
@@ -155,6 +156,7 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
                                       break;
                 default:              break;
             }
+            observers.notify(NotifyType.PLAYER_BOUNCE);
         }
         else {
             // Set only the component of the player's velocity that moves them

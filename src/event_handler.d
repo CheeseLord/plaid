@@ -6,8 +6,8 @@ private import std.algorithm;
 private import derelict.sdl2.sdl;
 
 private import globals;
-
 private import load_level;
+private import observer;
 
 void handleEvents()
 {
@@ -48,6 +48,7 @@ void handleEvents()
             player.vel.x = playerMaxWalkSpeed;
         }
     }
+    // TODO [#49] Move to physics.
     else {
         if (player.vel.x > 0){
             player.vel.x =  max(player.vel.x - playerWalkAcceleration, 0);
@@ -59,6 +60,7 @@ void handleEvents()
     if (playerState == PlayerState.STANDING) {
         if (keyState[SDL_SCANCODE_UP]) {
             player.vel.y += playerJumpStrength;
+            observers.notify(NotifyType.PLAYER_JUMP);
         }
     }
 }
