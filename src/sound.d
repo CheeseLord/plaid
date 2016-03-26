@@ -16,11 +16,11 @@ private import util.sound;
 public class Sound: util.sound.Sound {
  private static:
     string[] seFileName =
-        ["jump.wav", "land.wav"];
+        ["jump.wav", "land.wav", "bounce.wav"];
     string[] musicFileName =
         ["background.wav"];
     int[] seChannel =
-        [0, 1];
+        [0, 1, 2];
     Music[string] bgm;
     Chunk[string] se;
     bool[string] seMark;

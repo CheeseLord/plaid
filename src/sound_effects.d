@@ -26,8 +26,9 @@ private void makeSoundEffect(NotifyType eventInfo)
         Sound.playMarkedSes();
     }
     else if (eventInfo == NotifyType.PLAYER_BOUNCE) {
-        // TODO [#37]: Actually play a sound.
         debug writefln("Bounce.");
+        Sound.playSe("bounce.wav");
+        Sound.playMarkedSes();
     }
 }
 
