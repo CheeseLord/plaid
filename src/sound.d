@@ -39,11 +39,12 @@ private import util.sound;
 public class Sound: util.sound.Sound {
  private static:
     string[] seFileName =
-        ["jump.wav", "land.wav", "bounce.wav"];
+        ["win.wav", "lose.wav",
+         "jump.wav", "land.wav", "bounce.wav", "crumble.wav"];
     string[] musicFileName =
         ["background.wav"];
     int[] seChannel =
-        [0, 1, 2];
+        [0, 1, 2, 3, 4, 5];
     Music[string] bgm;
     Chunk[string] se;
     bool[string] seMark;

@@ -60,6 +60,8 @@ private void updatePlatforms(double elapsedSeconds)
             swap(crumbleTimers[i],
                  crumbleTimers[numCrumblingPlatforms - 1]);
             numCrumblingPlatforms--;
+
+            observers.notify(NotifyType.PLATFORM_CRUMBLE);
         }
         else {
             i++;
