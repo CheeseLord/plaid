@@ -1,4 +1,4 @@
-/*  This file was originally provided under the following license:
+/* This file was originally provided under the following license:
 
 Copyright 2006 Kenta Cho. All rights reserved.
 
