@@ -7,12 +7,14 @@ private import load_level;
 private import observer;
 
 
-public void registerObservers() {
+public void registerObservers()
+{
     observers.addObserver((x) => onWinLose(x));
 }
 
 
-private void onWinLose(NotifyType eventInfo) {
+private void onWinLose(NotifyType eventInfo)
+{
     if (eventInfo == NotifyType.WIN_LEVEL) {
         debug writefln("Won level!");
         currentLevel = "level1";

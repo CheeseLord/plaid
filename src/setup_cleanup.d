@@ -11,11 +11,12 @@ private import yaml;
 private import geometry;
 private import globals;
 private import graphics;
+private import load_level;
 private import observer;
 private import sound;
-private import yaml_parser;
-private import load_level;
+private import sound_effects;
 private import win_lose;
+private import yaml_parser;
 
 private enum InitIndex: int {
     NOTHING_INITIALIZED = 0,
@@ -231,7 +232,8 @@ bool setupObservers()
 {
     observers = new ObserverList();
 
-    win_lose.registerObservers();
+    win_lose     .registerObservers();
+    sound_effects.registerObservers();
 
     return true;
 }

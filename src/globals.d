@@ -25,7 +25,9 @@ double playerJumpStrength;
 // Game state
 Player player;
 Platform[] platforms;
-PlayerState playerState = PlayerState.FALLING;
+PlayerState playerState     = PlayerState.FALLING;
+// prevPlayerState is the playerState as of the *end* of the previous frame.
+PlayerState prevPlayerState = PlayerState.FALLING;
 string currentLevel;
 
 // Lists of the indices of the platforms that are currently crumbling and the

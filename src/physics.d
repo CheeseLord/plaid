@@ -16,6 +16,7 @@ enum Direction {LEFT, UP, RIGHT, DOWN};
 public void updateWorld(double elapsedSeconds)
 {
     applyGravity(elapsedSeconds);
+    prevPlayerState = playerState;
     if (playerState == PlayerState.STANDING) {
         playerState = PlayerState.FALLING;
     }
@@ -122,7 +123,9 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
                 firstCollisionDirection == Direction.DOWN &&
                 !platforms[firstCollisionIndex].bouncy) {
             playerState = PlayerState.STANDING;
-            observers.notify(NotifyType.PLAYER_LAND);
+            if (prevPlayerState != PlayerState.STANDING) {
+                observers.notify(NotifyType.PLAYER_LAND);
+            }
         }
 
         if     (platforms[firstCollisionIndex].crumble &&
