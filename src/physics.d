@@ -517,8 +517,8 @@ private bool segmentIntersectsVertical(WorldPoint s1Start, WorldPoint s1End,
                             (s2x - s1Start.x) +
                             s1Start.y;
 
-        if     ((s2Start.y <= intersectY && intersectY <= s2End.y) ||
-                (s2Start.y >= intersectY && intersectY >= s2End.y)) {
+        if     ((s2Start.y < intersectY && intersectY < s2End.y) ||
+                (s2Start.y > intersectY && intersectY > s2End.y)) {
             // The segments intersect.
             intersection = WorldPoint(s2x, intersectY);
             return true;
@@ -557,8 +557,8 @@ private bool segmentIntersectsHorizontal(WorldPoint s1Start, WorldPoint s1End,
                             (s2y - s1Start.y) +
                             s1Start.x;
 
-        if     ((s2Start.x <= intersectX && intersectX <= s2End.x) ||
-                (s2Start.x >= intersectX && intersectX >= s2End.x)) {
+        if     ((s2Start.x < intersectX && intersectX < s2End.x) ||
+                (s2Start.x > intersectX && intersectX > s2End.x)) {
             // The segments intersect.
             intersection = WorldPoint(intersectX, s2y);
             return true;
