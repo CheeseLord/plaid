@@ -138,31 +138,27 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
         }
 
 
-        // Set only the component of the player's velocity that moves them into
-        // the platform to zero. Leave the other component unchanged.
         if (platforms[firstCollisionIndex].bouncy) {
+            // Invert the component of the player's velocity that moves them
+            // into the platform.
+            // Note that this works horizontally as well as vertically because
+            // the side-to-side controls accelerate the player, rather than
+            // instantly setting his/her vel.x to some value.
             switch (firstCollisionDirection) {
-                // For vertical collisions, bounce.
+                case Direction.RIGHT: player.vel.x = -abs(player.vel.x);
+                                      break;
+                case Direction.LEFT:  player.vel.x =  abs(player.vel.x);
+                                      break;
                 case Direction.UP:    player.vel.y = -abs(player.vel.y);
                                       break;
                 case Direction.DOWN:  player.vel.y =  abs(player.vel.y);
                                       break;
-
-                // For horizontal collisions, don't bounce, because the new
-                // horizontal velocity would just be immediately overwritten
-                // based on what keys the player is pressing. However, do zero
-                // that component of the player's velocity, because otherwise
-                // they'll just immediately collide with the same platform on
-                // the next iteration of this function, leading to infinite
-                // recursion.
-                case Direction.RIGHT: player.vel.x = min(player.vel.x, 0);
-                                      break;
-                case Direction.LEFT:  player.vel.x = max(player.vel.x, 0);
-                                      break;
-                default: break;
+                default:              break;
             }
         }
         else {
+            // Set only the component of the player's velocity that moves them
+            // into the platform to zero. Leave the other component unchanged.
             switch (firstCollisionDirection) {
                 case Direction.RIGHT: player.vel.x = min(player.vel.x, 0);
                                       break;
