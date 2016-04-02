@@ -50,8 +50,10 @@ private void updatePlatforms(double elapsedSeconds)
         crumbleTimers[i] -= elapsedSeconds;
         if (crumbleTimers[i] <= 0.0) {
             // Finished crumbling.
-            platforms[crumblingPlatforms[i]].intangible = true;
-            platforms[crumblingPlatforms[i]].invisible  = true;
+            platforms[crumblingPlatforms[i]].isCrumbling = false;
+            platforms[crumblingPlatforms[i]].crumble     = false;
+            platforms[crumblingPlatforms[i]].intangible  = true;
+            platforms[crumblingPlatforms[i]].invisible   = true;
 
             // Swap that platform to the end of the crumble lists, then remove
             // it.
@@ -130,16 +132,17 @@ private void updatePlayer(double elapsedSeconds, size_t recursionDepth)
             }
         }
 
-        if     (platforms[firstCollisionIndex].crumble &&
+        if     ( platforms[firstCollisionIndex].crumble     &&
+                !platforms[firstCollisionIndex].isCrumbling &&
                 firstCollisionDirection == Direction.DOWN) {
             assert (numCrumblingPlatforms <= crumblingPlatforms.length,
                     "Number of crumbling platforms exceeds total number of "
                     "platforms.");
             crumblingPlatforms[numCrumblingPlatforms] = firstCollisionIndex;
             crumbleTimers     [numCrumblingPlatforms] = CRUMBLE_TIME;
-            // Clear the crumble bit so the platform doesn't get re-added to
+            // Set the isCrumbling bit so the platform doesn't get re-added to
             // the crumble list.
-            platforms[firstCollisionIndex].crumble = false;
+            platforms[firstCollisionIndex].isCrumbling = true;
             numCrumblingPlatforms++;
         }
 
