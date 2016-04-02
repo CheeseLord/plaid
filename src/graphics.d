@@ -25,6 +25,7 @@ private SDL_Surface* playerSprites;
 private SDL_Surface* unscaledPlayerSprites;
 
 private SDL_Surface* platformSprite;
+private SDL_Surface* platformCracksSprite;
 
 private double animationProgress = 0;
 
@@ -96,6 +97,20 @@ private bool loadSprites()
     platformSprite = IMG_Load("resources/sprites/platform.png");
     if (platformSprite is null) {
         printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
+        return false;
+    }
+
+    platformCracksSprite = IMG_Load("resources/sprites/platform-cracks.png");
+    if (platformCracksSprite is null) {
+        printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
+        return false;
+    }
+
+    // TODO [#51]: Handle this case.
+    if     (platformCracksSprite.w != platformSprite.w ||
+            platformCracksSprite.h != platformSprite.h) {
+        printf("Error: platform sprite and platform cracks sprite must be the "
+               "same size.\n");
         return false;
     }
 
@@ -212,6 +227,10 @@ void drawPlatform(SDL_Surface* surface, const ref Platform platform)
                 h: maxY - destRect.y,
             };
             SDL_BlitSurface(platformSprite, &sourceRect, surface, &destRect);
+            if (platform.crumble) {
+                SDL_BlitSurface(platformCracksSprite, &sourceRect, surface,
+                                &destRect);
+            }
         }
     }
 }
