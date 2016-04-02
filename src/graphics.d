@@ -173,6 +173,25 @@ void drawPlatform(SDL_Surface* surface, const ref Platform platform)
 
     const(ScreenRect) wholeRect = worldToScreenRect(platform.rect);
 
+    if (platform.bouncy) {
+        // We want to "coat" the platform in a yellowish-orange bouncy
+        // material. To draw this, just make a slightly larger rectangle of the
+        // bouncy coating and then draw the platform over the middle part of
+        // it.
+
+        // TODO [#3]: magic numbers bad.
+        immutable int BOUNCY_COATING_WIDTH = 3;
+
+        ScreenRect expandedRect = wholeRect;
+        expandedRect.x -=     BOUNCY_COATING_WIDTH;
+        expandedRect.y -=     BOUNCY_COATING_WIDTH;
+        expandedRect.w += 2 * BOUNCY_COATING_WIDTH;
+        expandedRect.h += 2 * BOUNCY_COATING_WIDTH;
+        SDL_FillRect(surface, &expandedRect,
+                     // TODO [#3]: magic numbers bad.
+                     SDL_MapRGB(surface.format, 255, 179, 0));
+    }
+
     int minX = wholeRect.x;
     int minY = wholeRect.y;
     int maxX = minX + wholeRect.w;
