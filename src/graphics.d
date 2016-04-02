@@ -140,14 +140,10 @@ void renderGame(double elapsedSeconds)
     SDL_Surface* surface = SDL_GetWindowSurface(window);
 
     ScreenRect sPlayerRect = worldToScreenRect(player.rect);
-    ScreenRect sPlatformRect;
 
     clearScreen();
     foreach (const ref platform; platforms) {
-        if (!platform.invisible) {
-            sPlatformRect = worldToScreenRect(platform.rect);
-            drawPlatform(surface, sPlatformRect);
-        }
+        drawPlatform(surface, platform);
     }
 
     int animationFrameNumber = cast(int)(animationProgress /
@@ -169,8 +165,14 @@ void clearScreen()
     SDL_FillRect(surface, null, SDL_MapRGB(surface.format, 255, 255, 255));
 }
 
-void drawPlatform(SDL_Surface* surface, const(ScreenRect) wholeRect)
+void drawPlatform(SDL_Surface* surface, const ref Platform platform)
 {
+    if (platform.invisible) {
+        return;
+    }
+
+    const(ScreenRect) wholeRect = worldToScreenRect(platform.rect);
+
     int minX = wholeRect.x;
     int minY = wholeRect.y;
     int maxX = minX + wholeRect.w;
