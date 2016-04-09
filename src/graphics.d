@@ -23,6 +23,8 @@ private int playerSpriteWidth;
 private int playerSpriteHeight;
 private SDL_Surface* playerSprites;
 private SDL_Surface* unscaledPlayerSprites;
+private SDL_Surface* playerRSprites;
+private SDL_Surface* unscaledPlayerRSprites;
 
 private SDL_Surface* platformSprite;
 private SDL_Surface* platformCracksSprite;
@@ -92,6 +94,30 @@ private bool loadSprites()
 
     SDL_BlitScaled(unscaledPlayerSprites, null,
                    playerSprites, null);
+
+
+    // TODO [#54]: This is a copy of the regular player sprite loading code.
+    unscaledPlayerRSprites = IMG_Load("resources/sprites/player_reversed.png");
+    if (unscaledPlayerRSprites is null) {
+        printf("Error: IMG_Load failed.\n%s\n", SDL_GetError());
+        return false;
+    }
+    SDL_SetSurfaceBlendMode(unscaledPlayerRSprites, SDL_BLENDMODE_NONE);
+    // ScreenRect sPlayerRect = worldToScreenRect(player.rect);
+    // playerSpriteWidth  = sPlayerRect.w;
+    // playerSpriteHeight = sPlayerRect.h;
+    playerRSprites = createSimilarSurface(unscaledPlayerRSprites,
+                                          playerSpriteWidth *
+                                              NUM_PLAYER_SPRITES,
+                                          playerSpriteHeight);
+    if (playerRSprites is null) {
+        printf("Error: Failed to create reversed player surface: %s\n",
+               SDL_GetError());
+        return false;
+    }
+    SDL_BlitScaled(unscaledPlayerRSprites, null,
+                   playerRSprites, null);
+
 
     // TODO [#28]: We never free this. Should we?
     platformSprite = IMG_Load("resources/sprites/platform.png");
@@ -169,7 +195,15 @@ void renderGame(double elapsedSeconds)
         w: playerSpriteWidth,
         h: playerSpriteHeight,
     };
-    SDL_BlitSurface(playerSprites, &sPlayerSpriteRect, surface, &sPlayerRect);
+
+    SDL_Surface* playerFacingSprites;
+    switch (playerFacing) {
+        case PlayerFacing.RIGHT: playerFacingSprites = playerSprites;  break;
+        case PlayerFacing.LEFT:  playerFacingSprites = playerRSprites; break;
+        default: assert(false);
+    }
+    SDL_BlitSurface(playerFacingSprites, &sPlayerSpriteRect,
+                    surface, &sPlayerRect);
 
     SDL_UpdateWindowSurface(window);
 }

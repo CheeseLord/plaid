@@ -37,12 +37,14 @@ void handleEvents()
     }
 
     if      (keyState[SDL_SCANCODE_LEFT] && ! keyState[SDL_SCANCODE_RIGHT]) {
+        playerFacing = PlayerFacing.LEFT;
         player.vel.x += -playerWalkAcceleration;
         if (player.vel.x <  -playerMaxWalkSpeed) {
             player.vel.x = -playerMaxWalkSpeed;
         }
     }
     else if (keyState[SDL_SCANCODE_RIGHT] && ! keyState[SDL_SCANCODE_LEFT]) {
+        playerFacing = PlayerFacing.RIGHT;
         player.vel.x += playerWalkAcceleration;
         if (player.vel.x > playerMaxWalkSpeed) {
             player.vel.x = playerMaxWalkSpeed;

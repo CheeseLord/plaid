@@ -40,3 +40,8 @@ enum PlayerState {
     FALLING,
 }
 
+enum PlayerFacing {
+    LEFT,
+    RIGHT,
+}
+

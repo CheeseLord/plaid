@@ -28,6 +28,9 @@ Platform[] platforms;
 PlayerState playerState     = PlayerState.FALLING;
 // prevPlayerState is the playerState as of the *end* of the previous frame.
 PlayerState prevPlayerState = PlayerState.FALLING;
+// TODO [#3]: Store in the level? (Maybe just make it a member of the player so
+// it's automatically read from the yaml?)
+PlayerFacing playerFacing = PlayerFacing.RIGHT;
 string currentLevel;
 
 // Lists of the indices of the platforms that are currently crumbling and the
