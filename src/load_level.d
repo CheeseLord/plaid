@@ -13,7 +13,7 @@ private import yaml_parser;
 // Set up game objects.
 bool setupObjects()
 {
-    currentLevel = "level0";
+    currentLevel = "speciesTest";
     initializeLevel(currentLevel);
     Sound.playBgm();
     return true;

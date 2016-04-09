@@ -1,0 +1,132 @@
+---
+world-view:
+    x: 0
+    y: 0
+    w: 200
+    h: 150
+
+scroll-speed: 2
+
+player:
+    rect:
+        x: 20
+        y: 15
+        w: 15
+        h: 30
+    vel:
+        x: 0
+        y: 0
+
+platforms:
+    # Floor
+    - rect:
+        x: 0
+        y: 0
+        w: 200
+        h: 10
+      species: []
+    # Left wall
+    - rect:
+        x: 0
+        y: 0
+        w: 10
+        h: 1000
+      species: []
+    # Right wall
+    - rect:
+        x: 190
+        y: 0
+        w: 10
+        h: 1000
+      species: []
+
+    - rect:
+        x: 0
+        y: 50
+        w: 40
+        h: 10
+      species:
+        - JUMPTHRU
+        - BOUNCY
+
+    - rect:
+        x: 40
+        y: 50
+        w: 40
+        h: 10
+      species:
+        - JUMPTHRU
+        - CRUMBLE
+
+    - rect:
+        x: 80
+        y: 50
+        w: 40
+        h: 10
+      species:
+        - BOUNCY
+        - INVISIBLE
+
+    - rect:
+        x: 120
+        y: 50
+        w: 40
+        h: 10
+      species:
+        - JUMPTHRU
+        - INTANGIBLE
+
+    - rect:
+        x: 0
+        y: 90
+        w: 40
+        h: 10
+      species:
+        - BOUNCY
+        - INTANGIBLE
+
+    - rect:
+        x: 40
+        y: 90
+        w: 40
+        h: 10
+      species:
+        - CRUMBLE
+        - INTANGIBLE
+
+    - rect:
+        x: 80
+        y: 90
+        w: 40
+        h: 10
+      species:
+        - INVISIBLE
+        - INTANGIBLE
+
+    - rect:
+        x: 120
+        y: 90
+        w: 40
+        h: 10
+      species:
+        - BOUNCY
+        - CRUMBLE
+
+    - rect:
+        x: 40
+        y: 140
+        w: 40
+        h: 10
+      species:
+        - INVISIBLE
+        - CRUMBLE
+
+    - rect:
+        x: 80
+        y: 140
+        w: 40
+        h: 10
+      species:
+        - INVISIBLE
+        - JUMPTHRU
+
